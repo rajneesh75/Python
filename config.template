@@ -1,0 +1,4 @@
+[server]
+name = {{ server_name }}
+port = {{ port }}
+debug = {{ debug }}

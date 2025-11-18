@@ -1,0 +1,111 @@
+pip install --upgrade pip
+
+pip install pyswarm
+
+import numpy as np
+from pyswarm import pso
+
+class Solution:
+    def __init__(self, name):
+        self.name = name
+        self.time_to_implement = 0.0
+        self.cost_to_implement = 0.0
+        self.efforts_to_implement = 0.0
+        self.effectiveness = 0.0
+        self.weights = [0.0, 0.0, 0.0, 0.0]
+
+    def __repr__(self):
+        return (f"Solution: {self.name}, "
+                f"Time: {self.time_to_implement:.2f}, "
+                f"Cost: {self.cost_to_implement:.2f}, "
+                f"Efforts: {self.efforts_to_implement:.2f}, "
+                f"Effectiveness: {self.effectiveness:.2f}, "
+                f"Weights: {[f'{w:.2f}' for w in self.weights]}")
+
+solutions = [
+    Solution("stop fossil fuels"),
+    Solution("Plant more trees"),
+    Solution("Carbon capture by technology"),
+    Solution("Electric Vehicles"),
+    Solution("Carbon capture by algae in oceans"),
+    Solution("Reflecting back sunlight using technolog")
+]
+
+import random
+for solution in solutions:
+    solution.weights = [round(random.uniform(1, 10), 2) for _ in range(4)]
+    solution.time_to_implement = solution.weights[0]
+    solution.cost_to_implement = solution.weights[1]
+    solution.efforts_to_implement = solution.weights[2]
+    solution.effectiveness = solution.weights[3]
+    print(solution)
+
+def objective_function(x):
+    total_sum = 0.0
+    for i in range(len(x) // 4):
+        time = x[i * 4]
+        cost = 1 / (time ** 2)
+        efforts = x[i * 4 + 2]
+        effectiveness = x[i * 4 + 3]
+        total_sum += time + cost + efforts + effectiveness
+    return total_sum
+
+num_solutions = len(solutions)
+num_parameters = 4
+
+
+lb = [1.0, 0.01, 1.0, 1.0] * num_solutions  
+ub = [10.0, 10.0, 10.0, 10.0] * num_solutions
+
+
+optimal_weights, optimal_value = pso(objective_function, lb, ub, swarmsize=10, maxiter=20)
+
+print("Optimal Weights:\n ", optimal_weights)
+print("Optimal Value (Minimum Sum of Weights): ", optimal_value)
+
+
+for i in range(num_solutions):
+    solution = solutions[i]
+    solution.time_to_implement = round(optimal_weights[i * num_parameters], 2)
+    solution.cost_to_implement = round(1 / (optimal_weights[i * num_parameters] ** 2), 2)
+    solution.efforts_to_implement = round(optimal_weights[i * num_parameters + 2], 2)
+    solution.effectiveness = round(optimal_weights[i * num_parameters + 3], 2)
+    solution.weights = [
+        solution.time_to_implement,
+        solution.cost_to_implement,
+        solution.efforts_to_implement,
+        solution.effectiveness
+    ]
+    print(solution)
+
+
+min_sum = float('inf')
+best_solution = None
+
+for solution in solutions:
+    weight_sum = sum(solution.weights)
+    if weight_sum < min_sum:
+        min_sum = weight_sum
+        best_solution = solution
+
+print("\n")
+print(best_solution)
+output_dict = {
+    "solution": best_solution.name,
+    "time_to_implement": best_solution.time_to_implement,
+    "cost_to_implement": best_solution.cost_to_implement,
+    "efforts_to_implement": best_solution.efforts_to_implement,
+    "effectiveness": best_solution.effectiveness,
+    "weights": {
+        "time_to_implement": best_solution.time_to_implement,
+        "cost_to_implement": best_solution.cost_to_implement,
+        "efforts_to_implement": best_solution.efforts_to_implement,
+        "effectiveness": best_solution.effectiveness
+    }
+}
+
+print("\nOptimal Solution with Minimum Sum of Weightages:")
+print(output_dict)
+
+
+

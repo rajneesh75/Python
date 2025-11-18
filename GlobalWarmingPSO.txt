@@ -1,0 +1,358 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Note: you may need to restart the kernel to use updated packages.\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Python310\\python.exe: No module named pip\n"
+     ]
+    }
+   ],
+   "source": [
+    "pip install --upgrade pip"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "executionInfo": {
+     "elapsed": 11756,
+     "status": "ok",
+     "timestamp": 1718174743631,
+     "user": {
+      "displayName": "Vedant D",
+      "userId": "01688426188867806709"
+     },
+     "user_tz": -330
+    },
+    "id": "EboQHjgJ_6ln",
+    "outputId": "fdcd96bf-f65a-4dce-b8ed-46d07fb77b17"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Note: you may need to restart the kernel to use updated packages.\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Python310\\python.exe: No module named pip\n"
+     ]
+    }
+   ],
+   "source": [
+    "pip install pyswarm"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "executionInfo": {
+     "elapsed": 517,
+     "status": "ok",
+     "timestamp": 1718174913891,
+     "user": {
+      "displayName": "Vedant D",
+      "userId": "01688426188867806709"
+     },
+     "user_tz": -330
+    },
+    "id": "8uXqr4nfAMaW"
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "from pyswarm import pso\n",
+    "\n",
+    "class Solution:\n",
+    "    def __init__(self, name):\n",
+    "        self.name = name\n",
+    "        self.time_to_implement = 0.0\n",
+    "        self.cost_to_implement = 0.0\n",
+    "        self.efforts_to_implement = 0.0\n",
+    "        self.effectiveness = 0.0\n",
+    "        self.weights = [0.0, 0.0, 0.0, 0.0]\n",
+    "\n",
+    "    def __repr__(self):\n",
+    "        return (f\"Solution: {self.name}, \"\n",
+    "                f\"Time: {self.time_to_implement:.2f}, \"\n",
+    "                f\"Cost: {self.cost_to_implement:.2f}, \"\n",
+    "                f\"Efforts: {self.efforts_to_implement:.2f}, \"\n",
+    "                f\"Effectiveness: {self.effectiveness:.2f}, \"\n",
+    "                f\"Weights: {[f'{w:.2f}' for w in self.weights]}\")\n",
+    "\n",
+    "solutions = [\n",
+    "    Solution(\"stop fossil fuels\"),\n",
+    "    Solution(\"Plant more trees\"),\n",
+    "    Solution(\"Carbon capture by technology\"),\n",
+    "    Solution(\"Electric Vehicles\"),\n",
+    "    Solution(\"Carbon capture by algae in oceans\"),\n",
+    "    Solution(\"Reflecting back sunlight using technolog\")\n",
+    "]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "executionInfo": {
+     "elapsed": 484,
+     "status": "ok",
+     "timestamp": 1718174941074,
+     "user": {
+      "displayName": "Vedant D",
+      "userId": "01688426188867806709"
+     },
+     "user_tz": -330
+    },
+    "id": "zwP4dW2tArCP",
+    "outputId": "4f998389-0c8f-46ba-8778-684193f1fc89"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Solution: stop fossil fuels, Time: 7.00, Cost: 3.34, Efforts: 9.58, Effectiveness: 1.02, Weights: ['7.00', '3.34', '9.58', '1.02']\n",
+      "Solution: Plant more trees, Time: 5.61, Cost: 2.94, Efforts: 1.51, Effectiveness: 4.08, Weights: ['5.61', '2.94', '1.51', '4.08']\n",
+      "Solution: Carbon capture by technology, Time: 6.99, Cost: 5.47, Efforts: 7.80, Effectiveness: 7.67, Weights: ['6.99', '5.47', '7.80', '7.67']\n",
+      "Solution: Electric Vehicles, Time: 2.01, Cost: 9.18, Efforts: 7.95, Effectiveness: 4.78, Weights: ['2.01', '9.18', '7.95', '4.78']\n",
+      "Solution: Carbon capture by algae in oceans, Time: 6.51, Cost: 8.02, Efforts: 2.23, Effectiveness: 2.31, Weights: ['6.51', '8.02', '2.23', '2.31']\n",
+      "Solution: Reflecting back sunlight using technolog, Time: 7.73, Cost: 3.82, Efforts: 4.56, Effectiveness: 5.30, Weights: ['7.73', '3.82', '4.56', '5.30']\n"
+     ]
+    }
+   ],
+   "source": [
+    "import random\n",
+    "for solution in solutions:\n",
+    "    solution.weights = [round(random.uniform(1, 10), 2) for _ in range(4)]\n",
+    "    solution.time_to_implement = solution.weights[0]\n",
+    "    solution.cost_to_implement = solution.weights[1]\n",
+    "    solution.efforts_to_implement = solution.weights[2]\n",
+    "    solution.effectiveness = solution.weights[3]\n",
+    "    print(solution)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "executionInfo": {
+     "elapsed": 530,
+     "status": "ok",
+     "timestamp": 1718174945231,
+     "user": {
+      "displayName": "Vedant D",
+      "userId": "01688426188867806709"
+     },
+     "user_tz": -330
+    },
+    "id": "NaQgaueCAwK_"
+   },
+   "outputs": [],
+   "source": [
+    "def objective_function(x):\n",
+    "    total_sum = 0.0\n",
+    "    for i in range(len(x) // 4):\n",
+    "        time = x[i * 4]\n",
+    "        cost = 1 / (time ** 2)\n",
+    "        efforts = x[i * 4 + 2]\n",
+    "        effectiveness = x[i * 4 + 3]\n",
+    "        total_sum += time + cost + efforts + effectiveness\n",
+    "    return total_sum"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "executionInfo": {
+     "elapsed": 515,
+     "status": "ok",
+     "timestamp": 1718174950664,
+     "user": {
+      "displayName": "Vedant D",
+      "userId": "01688426188867806709"
+     },
+     "user_tz": -330
+    },
+    "id": "5DatC6kzA0Xh",
+    "outputId": "7bf54e24-d554-413b-ce6b-2a63c1342b6b"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Stopping search: maximum iterations reached --> 20\n",
+      "Optimal Weights:\n",
+      "  [1.         0.01       1.93974757 1.         6.88963249 9.02334206\n",
+      " 1.         1.         1.38308679 2.14317234 1.         3.90245938\n",
+      " 1.63855907 4.64211085 1.         1.08587331 1.         5.53462738\n",
+      " 9.9005083  1.00037115 1.46962451 0.01       1.         1.00330249]\n",
+      "Optimal Value (Minimum Sum of Weights):  41.592454205687915\n",
+      "Solution: stop fossil fuels, Time: 1.00, Cost: 1.00, Efforts: 1.94, Effectiveness: 1.00, Weights: ['1.00', '1.00', '1.94', '1.00']\n",
+      "Solution: Plant more trees, Time: 6.89, Cost: 0.02, Efforts: 1.00, Effectiveness: 1.00, Weights: ['6.89', '0.02', '1.00', '1.00']\n",
+      "Solution: Carbon capture by technology, Time: 1.38, Cost: 0.52, Efforts: 1.00, Effectiveness: 3.90, Weights: ['1.38', '0.52', '1.00', '3.90']\n",
+      "Solution: Electric Vehicles, Time: 1.64, Cost: 0.37, Efforts: 1.00, Effectiveness: 1.09, Weights: ['1.64', '0.37', '1.00', '1.09']\n",
+      "Solution: Carbon capture by algae in oceans, Time: 1.00, Cost: 1.00, Efforts: 9.90, Effectiveness: 1.00, Weights: ['1.00', '1.00', '9.90', '1.00']\n",
+      "Solution: Reflecting back sunlight using technolog, Time: 1.47, Cost: 0.46, Efforts: 1.00, Effectiveness: 1.00, Weights: ['1.47', '0.46', '1.00', '1.00']\n"
+     ]
+    }
+   ],
+   "source": [
+    "num_solutions = len(solutions)\n",
+    "num_parameters = 4\n",
+    "\n",
+    "\n",
+    "lb = [1.0, 0.01, 1.0, 1.0] * num_solutions  \n",
+    "ub = [10.0, 10.0, 10.0, 10.0] * num_solutions\n",
+    "\n",
+    "\n",
+    "optimal_weights, optimal_value = pso(objective_function, lb, ub, swarmsize=10, maxiter=20)\n",
+    "\n",
+    "print(\"Optimal Weights:\\n \", optimal_weights)\n",
+    "print(\"Optimal Value (Minimum Sum of Weights): \", optimal_value)\n",
+    "\n",
+    "\n",
+    "for i in range(num_solutions):\n",
+    "    solution = solutions[i]\n",
+    "    solution.time_to_implement = round(optimal_weights[i * num_parameters], 2)\n",
+    "    solution.cost_to_implement = round(1 / (optimal_weights[i * num_parameters] ** 2), 2)\n",
+    "    solution.efforts_to_implement = round(optimal_weights[i * num_parameters + 2], 2)\n",
+    "    solution.effectiveness = round(optimal_weights[i * num_parameters + 3], 2)\n",
+    "    solution.weights = [\n",
+    "        solution.time_to_implement,\n",
+    "        solution.cost_to_implement,\n",
+    "        solution.efforts_to_implement,\n",
+    "        solution.effectiveness\n",
+    "    ]\n",
+    "    print(solution)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "executionInfo": {
+     "elapsed": 489,
+     "status": "ok",
+     "timestamp": 1718174954913,
+     "user": {
+      "displayName": "Vedant D",
+      "userId": "01688426188867806709"
+     },
+     "user_tz": -330
+    },
+    "id": "S9GVpM0VCmFl",
+    "outputId": "6e858644-fd57-4d9b-d8d7-ac8c6c206019"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "\n",
+      "Solution: Carbon capture by technology, Time: 1.00, Cost: 1.00, Efforts: 1.00, Effectiveness: 1.00, Weights: ['1.00', '1.00', '1.00', '1.00']\n",
+      "\n",
+      "Optimal Solution with Minimum Sum of Weightages:\n",
+      "{'solution': 'Carbon capture by technology', 'time_to_implement': 1.0, 'cost_to_implement': 1.0, 'efforts_to_implement': 1.0, 'effectiveness': 1.0, 'weights': {'time_to_implement': 1.0, 'cost_to_implement': 1.0, 'efforts_to_implement': 1.0, 'effectiveness': 1.0}}\n"
+     ]
+    }
+   ],
+   "source": [
+    "\n",
+    "min_sum = float('inf')\n",
+    "best_solution = None\n",
+    "\n",
+    "for solution in solutions:\n",
+    "    weight_sum = sum(solution.weights)\n",
+    "    if weight_sum < min_sum:\n",
+    "        min_sum = weight_sum\n",
+    "        best_solution = solution\n",
+    "\n",
+    "print(\"\\n\")\n",
+    "print(best_solution)\n",
+    "output_dict = {\n",
+    "    \"solution\": best_solution.name,\n",
+    "    \"time_to_implement\": best_solution.time_to_implement,\n",
+    "    \"cost_to_implement\": best_solution.cost_to_implement,\n",
+    "    \"efforts_to_implement\": best_solution.efforts_to_implement,\n",
+    "    \"effectiveness\": best_solution.effectiveness,\n",
+    "    \"weights\": {\n",
+    "        \"time_to_implement\": best_solution.time_to_implement,\n",
+    "        \"cost_to_implement\": best_solution.cost_to_implement,\n",
+    "        \"efforts_to_implement\": best_solution.efforts_to_implement,\n",
+    "        \"effectiveness\": best_solution.effectiveness\n",
+    "    }\n",
+    "}\n",
+    "\n",
+    "print(\"\\nOptimal Solution with Minimum Sum of Weightages:\")\n",
+    "print(output_dict)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "colab": {
+   "authorship_tag": "ABX9TyOy7PywkbSx+NZ0ehFCfcc8",
+   "provenance": []
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
