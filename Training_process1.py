@@ -13,6 +13,8 @@ lamini.api_key = os.getenv("LAMINI.API_KEY")
 logger = logging.getLogger(__name__)
 global_config = None
 
+
+
 dataset_name = "lamini_docs.jsonl"
 dataset_path = dataset_name
 use_hf = False
@@ -138,7 +140,7 @@ training_args = TrainingArguments(
     save_steps=120,  # After # steps model is saved
     warmup_steps=1,  # Number of warmup steps for learning rate scheduler
     per_device_eval_batch_size=1,  # Batch size for evaluation
-    evaluation_strategy="steps",
+    #evaluation_strategy="steps",
     logging_strategy="steps",
     logging_steps=1,
     optim="adafactor",
