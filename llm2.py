@@ -4,7 +4,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-print(login(os.getenv("HUGGING_FACE_KEY")))
+login(os.getenv("HUGGING_FACE_KEY"))
+
 
 api = HfApi()
 user_info = api.whoami(token=os.getenv("HUGGING_FACE_KEY"))
