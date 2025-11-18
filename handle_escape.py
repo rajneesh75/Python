@@ -1,4 +1,5 @@
-import time, sys
+import sys
+import time
 
 ESC = '\x1b'
 PY3K = sys.version_info >= (3,)
