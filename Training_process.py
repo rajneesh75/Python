@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-print("Loaded:", os.getenv("LAMINI.API_KEY"))
+
 
 lamini.api_key = os.getenv("LAMINI.API_KEY")
 

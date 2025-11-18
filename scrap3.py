@@ -1,6 +1,6 @@
 import requests
 
-url = "https://api.github.com/users/octocat/repos"
+url = "https://api.github.com/users/rajneesh75/repos"
 r = requests.get(url)
 repos = r.json()
 
