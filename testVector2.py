@@ -5,6 +5,10 @@ from tensorflow.keras.layers import Input, Dense, Lambda, Layer
 from tensorflow.keras.models import Model
 from tensorflow.keras import backend as k
 from tensorflow.keras import losses
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Neural Network Parameters
 batch_size, n_epoch = 100, 50

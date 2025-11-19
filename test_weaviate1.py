@@ -1,12 +1,9 @@
 import weaviate
-from weaviate.classes.init import Auth
-import weaviate.classes.config as wc
-import weaviate.classes.query as wq
+from weaviate.auth import Auth
 import pandas as pd
 import requests
 from datetime import datetime, timezone
 import json
-from weaviate.util import generate_uuid5
 from tqdm import tqdm
 import os
 from dotenv import load_dotenv

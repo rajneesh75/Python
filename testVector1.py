@@ -4,7 +4,9 @@ from tensorflow.keras.layers import Input, Dense, Lambda, Layer
 from tensorflow.keras.models import Model
 from tensorflow.keras import backend as k
 from tensorflow.keras import losses
-from scipy.stats import norm
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # sampling function

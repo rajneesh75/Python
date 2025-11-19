@@ -1,6 +1,7 @@
 import weaviate
 from weaviate.classes.init import Auth
 import weaviate.classes.config as wc
+from weaviate import Config
 import pandas as pd
 import requests
 from datetime import datetime, timezone
