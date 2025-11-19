@@ -1,8 +1,7 @@
 from transformers import AutoTokenizer
 
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/pythia-70m")
-
-#print(tokenizer)
+print(tokenizer)
 
 text = "Hi, how are you?"
 encoded_text = tokenizer(text)["input_ids"]

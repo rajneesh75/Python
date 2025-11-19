@@ -10,7 +10,7 @@ model_name = "gpt2"
 
 
 tokenizer = AutoTokenizer.from_pretrained(model_name, token=os.getenv("HUGGING_FACE_KEY"))
-model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16, token=os.getenv("HUGGING_FACE_KEY"))
+model = AutoModelForCausalLM.from_pretrained(model_name, dtype=torch.float16, token=os.getenv("HUGGING_FACE_KEY"))
 print("Model loaded successfully!")
 print(tokenizer)
 print(model)
