@@ -2,8 +2,14 @@ import itertools
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
+import os
+from dotenv import load_dotenv
+from huggingface_hub import login
 
-pretrained_dataset = load_dataset("allenai/c4", "en", split="train", streaming=True, trust_remote_code=True)
+
+load_dotenv()
+login(os.getenv("HUGGING_FACE_KEY"))
+pretrained_dataset = load_dataset("allenai/c4", "en", split="train", streaming=True)
 
 n = 5
 print("Pretrained dataset:")
