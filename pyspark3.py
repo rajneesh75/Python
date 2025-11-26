@@ -1,11 +1,7 @@
-import sys
 from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("MyFirstSparkJob").getOrCreate()
 
-print("Driver Python:", sys.executable)
+data = [("Raj", 25), ("Neha", 29), ("Vikram", 31)]
+df = spark.createDataFrame(data, ["name", "age"])
+df.show()
 
-
-spark = SparkSession.builder.master("local[*]").appName("test").getOrCreate()
-print(spark)
-
-rdd = spark.sparkContext.parallelize([1,2,3,4])
-print(rdd.map(lambda x: x * 2).collect())
