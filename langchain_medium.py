@@ -1,86 +1,78 @@
-from langchain_core.output_parsers import StructuredOutputParser
-from langchain_core.output_parsers import JsonOutputParser
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.prompts import PromptTemplate
+from pydantic import BaseModel, Field
+from typing import List
+from pprint import pprint
 
 load_dotenv()
-chat = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo", api_key=os.getenv("OPENAI_API_KEY"))
+llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo", api_key=os.getenv("OPENAI_API_KEY"))
 
 
-class MyResponseSchema(BaseModel):
-    name: str
-    description: str
+# Define the schema for nutritional values
+class NutritionValue(BaseModel):
+    """Represents a specific nutritional component of a food item, including its name, value,
+    and unit of measurement."""
+
+    name: str = Field(description="The name of the nutritional component (e.g., Protein, Calories, Carbohydrates).")
+    value: float = Field(description="The numerical value of the nutritional component per serving.")
+    unit: str = Field(description="The unit of measurement for the nutrition value (e.g., kcal, g, mg).")
 
 
-customer_review = """This leaf blower is pretty amazing. It has four settings:\
-candle blower, gentle breeze, windy city, and tornado. \
-It arrived in two days, just in time for my wife's anniversary present. \
-I think my wife liked it so much she was speechless. So far I've been the only one using it, and I've been \
-using it every other morning to clear the leaves on our lawn. \
-It's slightly more expensive than the other leaf blowers \
-out there, but I think it's worth it for the extra features."""
+# Define the schema for food information
+class FoodInformation(BaseModel):
+    """Stores detailed information about a food item, including its name, nutritional values,
+     and standard serving size."""
 
-review_template = """For the following text, extract the following information:
-gift: Was the item purchased as a gift for someone else? Answer True if yes, False if not or unknown.
-delivery_days: How many days did it take for the product to arrive? If this information is not found, output -1.
-price_value: Extract any sentences about the value or price, and output them as a comma separated Python list.
+    name: str = Field(description="The name of the food item (e.g., Apple, Chicken Breast).")
+    nutritions: List[NutritionValue] = Field(description="A list of nutritional values associated with the food item.")
+    serving_size: float = Field(
+        description="The standard serving size of the food item in grams (g) or milliliters (ml).")
 
-Format the output as JSON with the following keys:
-gift
-delivery_days
-price_value
 
-text: {text}"""
+# Define the response schema for API output
+class ResponseSchema(BaseModel):
+    """Defines the structure of the API response, including status, message, and retrieved food information."""
 
-prompt_template = ChatPromptTemplate.from_template(review_template)
-print(prompt_template)
+    status: bool = Field(description="Indicates whether the request was successful. True for success, False otherwise.")
+    message: str = Field(
+        description="A descriptive message providing information about the response "
+                    "(e.g., 'Data retrieved successfully' or 'Invalid input').")
+    data: List[FoodInformation] = Field(
+        description="A list of food items containing their names, nutritional values, "
+                    "and serving sizes. Returns an empty list if no data is found.")
 
-messages = prompt_template.format_messages(text=customer_review)
 
-response = chat.invoke(messages)
-print(response.content)
+# Create a JSON output parser using the defined response schema
+food_parser = JsonOutputParser(name="food item", pydantic_object=ResponseSchema)
 
-gift_schema = JsonOutputParser(name="gift", description="Was the item purchased as a gift for someone else? \
-                                          Answer True if yes, False if not or unknown.")
+# Print format instructions for generating structured JSON output
+# pprint(food_parser.get_format_instructions())
 
-delivery_days_schema = ResponseSchema(name="delivery_days", description="How many days \
-                                      did it take for the product to arrive? If this \
-                                      information is not found, output -1.")
+# Print JSON schema for validation/debugging purposes
+# pprint(food_parser.get_config_jsonschema())
 
-price_value_schema = ResponseSchema(name="price_value", description="Extract any \
-                                    sentences about the value or price, and output them as a \
-                                    comma separated Python list.")
+# Define the prompt template for generating food nutrition information
+food_template = """You are a nutritionist expert. You are given a food item and you need to 
+return the nutrition information of the food item.
+Food: {food}.
+If it is not a food item, return the proper message: "Provided item is not a food".
+Format output:
+{format_instructions}
+"""
 
-response_schemas = [gift_schema, delivery_days_schema, price_value_schema]
-output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
-format_instructions = output_parser.get_format_instructions()
-print(format_instructions)
+# Create a prompt template with input variables and formatted output instructions
+food_prompt = PromptTemplate(
+    input_variables=["food"],
+    template=food_template,
+    partial_variables={"format_instructions": food_parser.get_format_instructions()}
+)
 
-review_template_2 = """For the following text, extract the following information:
+# Define a processing chain: Prompt → LLM → JSON Parser
+food_chain = food_prompt | llm | food_parser
 
-gift: Was the item purchased as a gift for someone else? \
-Answer True if yes, False if not or unknown.
-
-delivery_days: How many days did it take for the product\
-to arrive? If this information is not found, output -1.
-
-price_value: Extract any sentences about the value or price,\
-and output them as a comma separated Python list.
-
-text: {text}
-
-{format_instructions}"""
-
-prompt = ChatPromptTemplate.from_template(template=review_template_2)
-
-messages = prompt.format_messages(text=customer_review, format_instructions=format_instructions)
-
-print(messages[0].content)
-response = chat(messages)
-print(response.content)
-output_dict = output_parser.parse(response.content)
-print(output_dict)
-print(type(output_dict))
+# Invoke the chain with an example input and print the structured output
+output = food_chain.invoke({"food": "pizza"})
+pprint(output)
