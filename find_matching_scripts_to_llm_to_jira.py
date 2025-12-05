@@ -45,11 +45,10 @@ def run_semantic_llm_pipeline(issue_key, issue_summary):
     prompt = f"""You are an expert in Python. For Jira Issue {issue_key} with summary: {query}.
             Below Relevant source code/s from the repository:"""
 
-    for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
-        prompt += f"\n--- File: {meta['filepath']} ---\n{doc[:1000]}\n"
+    for idx, (doc, meta) in enumerate(zip(results["documents"][0], results["metadatas"][0])):
+        prompt += f"\n{idx + 1}. File: {meta['filepath']} ---\n{doc[:500]}\n"
 
-    prompt += """
-    
+    prompt += """    
         Based on the 3 code scripts above:
         - Explain what needs to be done under the heading Details
         - Identify dependencies and risks under the heading Dependencies and Risks
