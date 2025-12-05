@@ -1,62 +1,40 @@
 import chromadb
 from chromadb.utils import embedding_functions
-import os
-from dotenv import load_dotenv
 
-
-load_dotenv()
-
-LOCAL_REPO_PATH = "./my_local_repo"
 COLLECTION_NAME = "python_code_embeddings"
 
-# ---------------------------
-# STEP 2 — Load all Python files recursively
-# ---------------------------
-documents = []
-file_paths = []
 
-for root, dirs, files in os.walk(LOCAL_REPO_PATH):
-    for file in files:
-        if file.endswith(".py"):
-            path = os.path.join(root, file)
-            with open(path, "r", encoding="utf-8", errors="ignore") as f:
-                content = f.read()
-                print(path)
-                print(content)
-                documents.append(content)
-                file_paths.append(path)
-                print('-----------------')
+def read_local_repository_store_chromedb(documents, file_paths):
+    print(f"Indexing {len(documents)} files into inmemory ChromaDB...")
 
-print(f"Found {len(documents)} Python files")
+    #client = chromadb.PersistentClient(path="./my_chroma")
+    client = chromadb.Client()
 
+    # Delete old collection if it exists
+    try:
+        client.delete_collection(name=COLLECTION_NAME)
+    except:
+        pass
 
-# ---------------------------
-# STEP 3 — Setup Chroma DB
-# ---------------------------
-print("Loading to chroma DB ...")
-client = chromadb.PersistentClient(path="./my_chroma")
+    # Create embedding function
+    embedder = embedding_functions.SentenceTransformerEmbeddingFunction(
+        model_name="all-MiniLM-L6-v2"
+    )
 
-sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="all-MiniLM-L6-v2"   # Fast + good for code/text
-)
+    # Create collection
+    collection = client.create_collection(
+        name=COLLECTION_NAME,
+        embedding_function=embedder
+    )
 
-# Delete existing collection if it exists
-print("Deleting existing collection...")
-client.delete_collection(name=COLLECTION_NAME)
+    # Prepare IDs
+    ids = [str(i) for i in range(len(documents))]
 
-print("Creating new collection...")
-# Create new collection
-collection = client.create_collection(name=COLLECTION_NAME,embedding_function=sentence_transformer_ef,)
+    # Insert into Chroma
+    collection.add(
+        documents=documents,
+        metadatas=[{"filepath": fp} for fp in file_paths],
+        ids=ids
+    )
 
-# ---------------------------
-# STEP 4 — Insert embeddings
-# ---------------------------
-ids = [str(i) for i in range(len(documents))]
-
-collection.add(
-    documents=documents,
-    metadatas=[{"filepath": p} for p in file_paths],
-    ids=ids
-)
-
-print(f"Inserted {len(documents)} documents into Chroma vector DB")
+    print(f"Inserted {len(documents)} documents into ChromaDB")

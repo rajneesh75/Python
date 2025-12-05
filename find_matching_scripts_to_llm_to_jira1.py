@@ -1,0 +1,109 @@
+import chromadb
+from chromadb.utils import embedding_functions
+from dotenv import load_dotenv
+import requests
+import os
+from jira import JIRA
+
+load_dotenv()
+
+LOCAL_REPO_PATH = "./my_local_repo"
+COLLECTION_NAME = "python_code_embeddings"
+
+JIRA_SERVER = os.getenv("JIRA_SERVER")
+JIRA_EMAIL = os.getenv("JIRA_EMAIL")
+JIRA_TOKEN = os.getenv("JIRA_KEY")
+ISSUE_KEY = os.getenv("ISSUE_KEY")
+
+print("Reading chroma DB...")
+client = chromadb.PersistentClient(path="./my_chroma")
+
+sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
+    model_name="all-MiniLM-L6-v2"  # Fast + good for code/text
+)
+
+collection = client.get_collection(name=COLLECTION_NAME, embedding_function=sentence_transformer_ef,)
+
+query = "Modify the script that returns the sum of 2 numbers to instead return a sum of 3 numbers."
+results = collection.query(query_texts=[query], n_results=3)
+
+print("Possible matching scripts:")
+for idx, (doc, meta, score) in enumerate(
+        zip(results["documents"][0], results["metadatas"][0], results["distances"][0])):
+    print(f"{idx + 1}. File: {meta.get('filepath')}  Score: {score}")
+    print(doc[:150])
+    print("-----")
+
+prompt = f"""
+You are an expert in Python. User query: {query}. 
+Relevant source code from the repository:
+"""
+
+for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
+    prompt += f"\n\n--- File: {meta['filepath']} ---\n{doc[:1000]}\n"
+
+prompt += """
+Based on the 3 code scripts above:
+- Explain what needs to be done under the heading Details
+- Identify dependencies and risks under the heading Dependencies and Risks
+- Suggest Acceptance criteria under the heading Acceptance Criteria
+- Suggest test cases under the heading Test Cases
+- Provide actionable guidance under the heading Actionable Guidance
+- Provide the actual code changes needed to be done
+"""
+
+print("Sending to LLM")
+
+print("Loaded:", os.getenv("NVIDIA_API_KEY"))
+invoke_url = "https://integrate.api.nvidia.com/v1/chat/completions"
+stream = False
+
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
+
+headers = {
+    "Authorization": f"Bearer {NVIDIA_API_KEY}",
+    "Accept": "text/event-stream",  # enable streaming
+    "Content-Type": "application/json",
+}
+
+payload = {
+    "model": "meta/llama-4-maverick-17b-128e-instruct",
+    "messages": [{"role": "user", "content": prompt}],
+    "max_tokens": 512,
+    "temperature": 1.00,
+    "top_p": 1.00,
+    "frequency_penalty": 0.00,
+    "presence_penalty": 0.00,
+    "stream": stream
+}
+
+response = requests.post(invoke_url, headers=headers, json=payload)
+
+if stream:
+    print("streaming response:")
+    for line in response.iter_lines():
+        if line:
+            print(line.decode("utf-8"))
+else:
+    print("non-streaming response:")
+    json_resp = response.json()
+    llm_output = json_resp["choices"][0]["message"]["content"]
+    print(llm_output)
+
+print("Posting to JIRA")
+
+jira_story_key = "SCRUM-1"  # Example story ID
+jira = JIRA(server=JIRA_SERVER, basic_auth=(JIRA_EMAIL, JIRA_TOKEN))
+
+# -----------------------------
+# Add LLM output as a comment
+# -----------------------------
+
+
+issue = jira.issue(jira_story_key)
+
+issue.update(fields={
+    "description": llm_output
+})
+
+print(f"LLM output successfully posted to JIRA story {jira_story_key}")

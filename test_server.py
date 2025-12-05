@@ -4,7 +4,7 @@ from contextlib import AsyncExitStack
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-SERVER_PATH = "main.py"
+SERVER_PATH = "mcp1.py"
 EXPECTED_TOOLS = [
     "get_customer_info",
     "get_order_details",
