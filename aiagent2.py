@@ -10,10 +10,6 @@ print("Loaded:", os.getenv("OPENAI_API_KEY"))
 llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-# -----------------------
-# Tools
-# -----------------------
-
 # Example 1 – Calculator tool
 def calc_tool(query: str):
     try:
@@ -43,18 +39,6 @@ tools = [
     )
 ]
 
-# -----------------------
-# Create Agent
-# -----------------------
-agent = initialize_agent(
-    tools,
-    llm,
-    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    verbose=True
-)
-
-# -----------------------
-# Run Agent Query
-# -----------------------
+agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
 result = agent.invoke({"prompt": "what is 45 * 22?"})
 print("\nFinal Answer:\n", result)

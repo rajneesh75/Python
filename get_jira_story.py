@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 import requests
-from langchain_core.documents import Document
 
 load_dotenv()
 
@@ -14,19 +13,18 @@ ISSUE_KEY = os.getenv("ISSUE_KEY")
 def fetch_issue(issue_key):
     url = f"{JIRA_SERVER}/rest/api/3/issue/{issue_key}"
     response = requests.get(url, auth=(JIRA_EMAIL, JIRA_TOKEN))
-
+    if response.status_code != 200:
+        print("Failed to fetch issue:", response.text)
+        return None
     data = response.json()
     summary = data["fields"]["summary"]
-    description = data["fields"].get("description", "")
 
-    return summary, description
+    return summary
 
 
-summary, description = fetch_issue(ISSUE_KEY)
+summary = fetch_issue(ISSUE_KEY)
 
 # turn the Jira issue into a document for embeddings
 text = f"ISSUE: {ISSUE_KEY}\nSUMMARY: {summary}"
-doc = Document(page_content=text)
-
 print(ISSUE_KEY)
 print(summary)

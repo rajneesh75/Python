@@ -1,16 +1,20 @@
 from langgraph.graph import StateGraph
 from typing import TypedDict
 
+
 class MyState(TypedDict):
     message: str
+
 
 def step1(state: MyState):
     print("Running step1")
     return {"message": state["message"] + " world"}
 
+
 def step2(state: MyState):
     print("Running step2")
     return {"message": state["message"] + "!"}
+
 
 # Build graph
 graph = StateGraph(MyState)

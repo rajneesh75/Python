@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Request
-
+from dotenv import load_dotenv
 from langchain_agent import agent
 
+load_dotenv()
 app = FastAPI()
 
 
