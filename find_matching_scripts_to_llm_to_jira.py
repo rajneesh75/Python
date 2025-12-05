@@ -15,13 +15,13 @@ JIRA_EMAIL = os.getenv("JIRA_EMAIL")
 JIRA_TOKEN = os.getenv("JIRA_KEY")
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 
+NO_OF_MATCHES = 5
+
 
 def run_semantic_llm_pipeline(issue_key, issue_summary):
-    print(f"\nRunning semantic match + LLM for Jira issue {issue_key}")
+    print(f"\nRunning semantic match in inmemory ChromaDB for Jira issue:- {issue_key} and {issue_summary}")
 
-    print("Reading chroma DB...")
-    client = chromadb.PersistentClient(path="./my_chroma")
-
+    client = chromadb.Client()
     sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
         model_name="all-MiniLM-L6-v2"  # Fast + good for code/text
     )
@@ -29,34 +29,35 @@ def run_semantic_llm_pipeline(issue_key, issue_summary):
     collection = client.get_collection(name=COLLECTION_NAME, embedding_function=sentence_transformer_ef,)
 
     # Use the JIRA issue summary as the query
-    query = issue_summary
+    # TOP n scripts
+    results = collection.query(query_texts=[issue_summary], n_results=NO_OF_MATCHES)
 
-    # TOP 3 scripts
-    results = collection.query(query_texts=[query], n_results=3)
-
-    print("\nPossible matching scripts:")
+    print("\nPossible matching scripts from most matching(Least distance) to least matching(Most distance:")
     for idx, (doc, meta, score) in enumerate(
             zip(results["documents"][0], results["metadatas"][0], results["distances"][0])):
         print(f"{idx + 1}. File: {meta.get('filepath')}  Score: {score}")
-        print(doc[:150])
+        print(doc[:600])
         print("-----")
 
+    print("Sending to LLM...")
+
     # ---- Build LLM Prompt ----
-    prompt = f"""You are an expert in Python. For Jira Issue {issue_key} with summary: {query}.
+    prompt = f"""You are an expert in Python. For Jira Issue {issue_key} with summary: {issue_summary}.
             Below Relevant source code/s from the repository:"""
 
     for idx, (doc, meta) in enumerate(zip(results["documents"][0], results["metadatas"][0])):
-        prompt += f"\n{idx + 1}. File: {meta['filepath']} ---\n{doc[:500]}\n"
+        prompt += f"\n{idx + 1}. File: {meta['filepath']} ---\n{doc[:700]}\n"
 
     prompt += """    
-        Based on the 3 code scripts above:
+        Based on the code scripts above:
+        - Mention on top which code script you are talking about under the heading Code Script Reference
         - Explain what needs to be done under the heading Details
         - Identify dependencies and risks under the heading Dependencies and Risks
         - Suggest Acceptance criteria under the heading Acceptance Criteria
         - Suggest test cases under the heading Test Cases
         - Provide actionable guidance under the heading Actionable Guidance
-        - Provide the actual code changes needed to be done
-        """
+        - Provide the actual code changes needed to be done"""
+
     print(prompt)
     print("\nSending to LLM")
 
