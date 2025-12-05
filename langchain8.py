@@ -1,5 +1,5 @@
-from langchain.agents import initialize_agent, AgentType
-from langchain.agents import Tool
+from langchain_classic.agents import initialize_agent, AgentType
+from langchain_core.tools import Tool
 from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_community.utilities import GoogleSearchAPIWrapper
 from langchain_openai import ChatOpenAI
