@@ -48,7 +48,8 @@ def run_semantic_llm_pipeline(issue_key, issue_summary):
     for idx, (doc, meta) in enumerate(zip(results["documents"][0], results["metadatas"][0])):
         prompt += f"\n{idx + 1}. File: {meta['filepath']} ---\n{doc[:700]}\n"
 
-    prompt += """    
+    prompt += """  
+        You are an expert software engineer  
         Based on the code scripts above:
         - Mention on top which code script you are talking about under the heading Code Script Reference
         - Explain what needs to be done under the heading Details

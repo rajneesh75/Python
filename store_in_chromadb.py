@@ -14,11 +14,13 @@ def read_local_repository_store_chromedb(documents, file_paths):
     embedder = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
 
     # Create collection
+    print("Embedding documents...")
     collection = client.create_collection(name=COLLECTION_NAME, embedding_function=embedder)
 
     # Prepare IDs
     ids = [str(i) for i in range(len(documents))]
 
     # Insert into Chroma
+    print(f"Inserting {len(documents)} documents into ChromaDB")
     collection.add(documents=documents, metadatas=[{"filepath": fp} for fp in file_paths], ids=ids)
-    print(f"Inserted {len(documents)} documents into ChromaDB")
+    print(f"Done")

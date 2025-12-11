@@ -13,8 +13,8 @@ JIRA_EMAIL = os.getenv("JIRA_EMAIL")
 JIRA_TOKEN = os.getenv("JIRA_KEY")
 
 POLL_JQL = (
-    "project = 'Project1' AND "
-    "(created >= -800m OR updated >= -800m) "
+    "project = 'Project1' "
+    "AND (created >= -60m OR updated >= -60m) "
     "ORDER BY updated DESC"
 )
 
@@ -36,7 +36,7 @@ def read_jira():
         "maxResults": MAX_RESULTS,
     }
 
-    resp = requests.get(url, params=params, auth=(JIRA_EMAIL, JIRA_TOKEN))
+    resp = requests.get(url, params=params, auth=(JIRA_EMAIL, JIRA_TOKEN), headers={"Accept": "application/json"})
 
     if resp.status_code != 200:
         print("Jira API Error:", resp.text)
