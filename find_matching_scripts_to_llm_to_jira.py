@@ -7,9 +7,8 @@ from jira import JIRA
 
 load_dotenv()
 
-LOCAL_REPO_PATH = "./my_local_repo"
-COLLECTION_NAME = "python_code_embeddings"
 
+COLLECTION_NAME = "python_code_embeddings"
 JIRA_SERVER = os.getenv("JIRA_SERVER")
 JIRA_EMAIL = os.getenv("JIRA_EMAIL")
 JIRA_TOKEN = os.getenv("JIRA_KEY")
@@ -22,17 +21,16 @@ def run_semantic_llm_pipeline(issue_key, issue_summary):
     print(f"\nRunning semantic match in inmemory ChromaDB for Jira issue:- {issue_key} and {issue_summary}")
 
     client = chromadb.Client()
-    sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name="all-MiniLM-L6-v2"  # Fast + good for code/text
-    )
-
+    print(f"Loading embedder...")
+    # Fast + good for code/text
+    sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
     collection = client.get_collection(name=COLLECTION_NAME, embedding_function=sentence_transformer_ef,)
 
     # Use the JIRA issue summary as the query
     # TOP n scripts
     results = collection.query(query_texts=[issue_summary], n_results=NO_OF_MATCHES)
 
-    print("\nPossible matching scripts from most matching(Least distance) to least matching(Most distance:")
+    print("\nPossible matching scripts from most matching(Least distance) to least matching(Most distance)")
     for idx, (doc, meta, score) in enumerate(
             zip(results["documents"][0], results["metadatas"][0], results["distances"][0])):
         print(f"{idx + 1}. File: {meta.get('filepath')}  Score: {score}")

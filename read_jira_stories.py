@@ -14,7 +14,7 @@ JIRA_TOKEN = os.getenv("JIRA_KEY")
 
 POLL_JQL = (
     "project = 'Project1' "
-    "AND (created >= -60m OR updated >= -60m) "
+    "AND (created >= -800m OR updated >= -800m) "
     "ORDER BY updated DESC"
 )
 
@@ -63,7 +63,7 @@ def main():
     print("\nStep 2: Storing Python files in ChromaDB...")
     store_in_chromadb.read_local_repository_store_chromedb(documents, file_paths)
 
-    print("\nStep 3: Reading Jira once...")
+    print("\nStep 3: Reading Jira...")
     issues = read_jira()
 
     for issue in issues:
