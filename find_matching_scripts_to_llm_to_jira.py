@@ -14,7 +14,7 @@ JIRA_EMAIL = os.getenv("JIRA_EMAIL")
 JIRA_TOKEN = os.getenv("JIRA_KEY")
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 
-NO_OF_MATCHES = 5
+NO_OF_MATCHES = 3
 
 
 def run_semantic_llm_pipeline(issue_key, issue_summary):
