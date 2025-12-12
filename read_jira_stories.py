@@ -14,7 +14,7 @@ JIRA_TOKEN = os.getenv("JIRA_KEY")
 
 POLL_JQL = (
     "project = 'Project1' "
-    "AND (created >= -800m OR updated >= -800m) "
+    "AND (created >= -60m OR updated >= -60m) "
     "ORDER BY updated DESC"
 )
 
