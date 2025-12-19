@@ -11,6 +11,11 @@ import os
 from dotenv import load_dotenv
 from tqdm import tqdm
 
+"""It turns raw unstructured text (movie descriptions) into a searchable, 
+AI-enhanced knowledge base where you can run semantic queries and 
+generate contextual outputs using OpenAI and Weaviate."""
+
+
 load_dotenv()
 headers = {"X-OpenAI-Api-Key": os.getenv("OPENAI_API_KEY")}  # Replace with your OpenAI API key
 

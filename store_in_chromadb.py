@@ -13,14 +13,14 @@ def read_local_repository_store_chromedb(documents, file_paths):
     collection = client.get_or_create_collection(name=COLLECTION_NAME, embedding_function=None)
 
     embeddings = []
-    print("\nEmbedding documents with progress...\n")
+    print("\nEmbedding documents ...\n")
     for doc in tqdm(documents, desc="Embedding"):
         embeddings.append(embedder([doc])[0])
 
     ids = [str(i) for i in range(len(documents))]
     metadatas = [{"filepath": fp} for fp in file_paths]
 
-    print("\nAdding embeddings to ChromaDB...")
+    print("\nStoring embeddings to ChromaDB...")
     collection.add(ids=ids, embeddings=embeddings, documents=documents, metadatas=metadatas)
 
     print(f"\nInserted {collection.count()} documents into ChromaDB.")

@@ -1,10 +1,10 @@
 import os
 import requests
 from dotenv import load_dotenv
-
 import read_github_scripts
 import store_in_chromadb
-from find_matching_scripts_to_llm_to_jira import run_semantic_llm_pipeline
+import find_matching_scripts_to_llm_to_jira
+
 
 load_dotenv()
 
@@ -69,7 +69,7 @@ def main():
     for issue in issues:
         key = issue["key"]
         summary = issue["fields"]["summary"]
-        run_semantic_llm_pipeline(key, summary)
+        find_matching_scripts_to_llm_to_jira.run_semantic_llm_pipeline(key, summary)
 
     print("\nDone!")
 

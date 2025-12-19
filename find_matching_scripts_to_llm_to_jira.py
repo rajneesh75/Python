@@ -14,7 +14,7 @@ JIRA_EMAIL = os.getenv("JIRA_EMAIL")
 JIRA_TOKEN = os.getenv("JIRA_KEY")
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 
-NO_OF_MATCHES = 3
+NO_OF_MATCHES = 2
 
 
 def run_semantic_llm_pipeline(issue_key, issue_summary):
@@ -40,22 +40,22 @@ def run_semantic_llm_pipeline(issue_key, issue_summary):
     print("Sending to LLM...")
 
     # ---- Build LLM Prompt ----
-    prompt = f"""You are an expert in Python. For Jira Issue {issue_key} with summary: {issue_summary}.
+    prompt = f"""For Jira Issue {issue_key} with summary: {issue_summary}.
             Below Relevant source code/s from the repository:"""
 
     for idx, (doc, meta) in enumerate(zip(results["documents"][0], results["metadatas"][0])):
         prompt += f"\n{idx + 1}. File: {meta['filepath']} ---\n{doc[:700]}\n"
 
     prompt += """  
-        You are an expert software engineer  
-        Based on the code scripts above:
-        - Mention on top which code script you are talking about under the heading Code Script Reference
-        - Explain what needs to be done under the heading Details
-        - Identify dependencies and risks under the heading Dependencies and Risks
-        - Suggest Acceptance criteria under the heading Acceptance Criteria
-        - Suggest test cases under the heading Test Cases
-        - Provide actionable guidance under the heading Actionable Guidance
-        - Provide the actual code changes needed to be done"""
+        You are an expert python software engineer. For each script provided:         
+        - Mention the code script under the heading 1) Code Script Reference. Dont repeat the JIRA issue summary.        
+        - Explain what needs to be done under the heading a) Details
+        - Identify dependencies and risks under the heading b) Dependencies and Risks
+        - Suggest Acceptance criteria under the heading c) Acceptance Criteria
+        - Suggest test cases under the heading d) Test Cases
+        - Provide actionable guidance under the heading e) Actionable Guidance
+        - Provide the actual code changes needed to be done under the heading f) Code Changes
+        - Maintain the serial numbering for code scripts"""
 
     print(prompt)
     print("\nSending to LLM")
