@@ -3,7 +3,7 @@ from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
-import mlflow
+
 
 spark = SparkSession.builder.getOrCreate()
 # spark.sparkContext.setLogLevel("INFO")
