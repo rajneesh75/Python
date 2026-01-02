@@ -1,12 +1,10 @@
 import sagemaker
 from sagemaker.sklearn.estimator import SKLearn
-from pathlib import Path
 import boto3
 import os
 from dotenv import load_dotenv
 
-env_path = Path('.env')
-load_dotenv(dotenv_path=env_path)
+load_dotenv()
 
 aws_access_key_id = os.getenv("aws_access_key_id")
 aws_secret_access_key = os.getenv("aws_secret_access_key")

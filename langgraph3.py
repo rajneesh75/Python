@@ -151,15 +151,22 @@ workflow.add_edge("general_node", END)
 # 6. Compile
 app = workflow.compile()
 
-inputs_1 = {"messages": [HumanMessage(content="What is 55 multiplied by 10?")]}
+input = {"messages": [HumanMessage(content="What is 55 multiplied by 10?")]}
 
 # Stream the output to see the steps
-for event in app.stream(inputs_1):
+for event in app.stream(input):
     for key, value in event.items():
         print(f"Finished running: {key}")
 
-inputs_2 = {"messages": [HumanMessage(content="Tell me a fun fact about history.")]}
+input = {"messages": [HumanMessage(content="Tell me a fun fact about history.")]}
 
-for event in app.stream(inputs_2):
+for event in app.stream(input):
+    for key, value in event.items():
+        print(f"Finished running: {key}")
+
+
+input = {"messages": [HumanMessage(content="What is square root of 2.")]}
+
+for event in app.stream(input):
     for key, value in event.items():
         print(f"Finished running: {key}")
