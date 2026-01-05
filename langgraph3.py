@@ -1,5 +1,5 @@
 from typing import TypedDict, List
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 import os
 from dotenv import load_dotenv
 import requests
@@ -80,7 +80,8 @@ def handle_math(state: AgentState):
     print("\nLLM OUTPUT:")
     print(llm_output)
     # We append the AI's response to the message history
-    return {"messages": [llm_output]}
+
+    return {"messages": [AIMessage(content=llm_output)]}
 
 
 # Node 3: The General Chat
@@ -111,7 +112,7 @@ def handle_general(state: AgentState):
     llm_output = json_resp["choices"][0]["message"]["content"]
     print("\nLLM OUTPUT:")
     print(llm_output)
-    return {"messages": [llm_output]}
+    return {"messages": [AIMessage(content=llm_output)]}
 
 
 def routing_logic(state: AgentState):
@@ -163,7 +164,6 @@ input = {"messages": [HumanMessage(content="Tell me a fun fact about history.")]
 for event in app.stream(input):
     for key, value in event.items():
         print(f"Finished running: {key}")
-
 
 input = {"messages": [HumanMessage(content="What is square root of 2.")]}
 
