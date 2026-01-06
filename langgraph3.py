@@ -35,7 +35,7 @@ def categorize_input(state: AgentState) -> dict:
     payload = {
         "model": "meta/llama-4-maverick-17b-128e-instruct",
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 1024,
+        "max_tokens": 16384,
         "temperature": 1.00,
         "top_p": 1.00,
         "frequency_penalty": 0.00,
