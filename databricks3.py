@@ -10,7 +10,7 @@ with sql.connect(
         http_path=f"/sql/1.0/warehouses/{os.getenv('DATABRICKS_CLUSTER_ID')}",
         access_token=os.getenv("DATABRICKS_TOKEN")
 ) as conn:
-    df = pd.read_sql("SELECT * FROM workspace.gold.customers_policies LIMIT 10", conn)
+    df = pd.read_sql("SELECT * FROM workspace.gold.customers_policies", conn)
 
 print(df)
 

@@ -10,6 +10,6 @@ connection = sql.connect(
 
 cursor = connection.cursor()
 with cursor:
-    cursor.execute("SELECT * FROM workspace.gold.customers_policies LIMIT 10")
+    cursor.execute("SELECT * FROM workspace.gold.customers_policies")
     rows = cursor.fetchall()
     print(rows)
