@@ -5,8 +5,8 @@ from sqlalchemy import create_engine
 
 load_dotenv()
 
-server_hostname = os.getenv("DATABRICKS_HOST"),
-http_path = f"/sql/1.0/warehouses/{os.getenv('DATABRICKS_CLUSTER_ID')}",
+server_hostname = os.getenv("DATABRICKS_HOST")
+http_path = f"/sql/1.0/warehouses/{os.getenv('DATABRICKS_CLUSTER_ID')}"
 access_token = os.getenv("DATABRICKS_TOKEN")
 
 engine = create_engine(
