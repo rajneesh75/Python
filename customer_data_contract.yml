@@ -1,0 +1,26 @@
+kind: DataContract
+apiVersion: v3.0.2
+id: urn:datacontract:ecommerce:orders
+name: customers
+version: 1.0.0
+status: active
+domain: insurance
+dataProduct: customers_data_product
+
+schema:
+  - name: customers
+    physicalType: table
+    properties:
+      - name: customer_id
+        logicalType: string
+        required: true              # → is_not_null
+        unique: true                # → is_unique
+        logicalTypeOptions:
+          pattern: '^[0-9]{8}$'   # → regex_match
+      
+      - name: customer_email
+        logicalType: string
+        required: true              # → is_not_null
+        logicalTypeOptions:
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'  # → regex_match    
+     
