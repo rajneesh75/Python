@@ -11,9 +11,6 @@ ws = WorkspaceClient()
 workspace_path = "/Users/rajneesh75@gmail.com/customer_data_contract.yml"
 local_path = "customer_data_contract.yml"
 
-# export from workspace -> local file
-content = ws.workspace.export(workspace_path, format=ExportFormat.SOURCE).content
-
 # Export Workspace file (as SOURCE)
 exported = ws.workspace.export(workspace_path, format=ExportFormat.SOURCE)
 
