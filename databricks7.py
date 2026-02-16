@@ -2,8 +2,9 @@ from databricks.sdk import WorkspaceClient
 import base64
 from databricks.sdk.service.workspace import ExportFormat
 from databricks.labs.dqx.profiler.generator import DQGenerator
-from databricks.connect import DatabricksSession
 
+
+from databricks.connect import DatabricksSession
 spark = DatabricksSession.builder.serverless().getOrCreate()
 
 ws = WorkspaceClient()
