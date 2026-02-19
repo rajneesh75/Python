@@ -7,7 +7,7 @@ spark = DatabricksSession.builder.serverless().getOrCreate()
 
 # Initialize the generator
 ws = WorkspaceClient()
-generator = DQGenerator(workspace_client=ws, spark=spark)
+generator = DQGenerator(workspace_client=ws)
 
 # Generate rules from natural language description
 user_input = """
@@ -16,6 +16,6 @@ All users must have a valid email address.
 Age should be between 0 and 120.
 """
 
-checks = generator.generate_dq_rules_ai_assisted(user_input=user_input)
+checks = generator.generate_dq_rules(user_input)
 
 print(checks)
