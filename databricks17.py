@@ -5,6 +5,7 @@ from databricks.labs.dqx import check_funcs
 from databricks.labs.dqx.rule import DQRowRule
 from databricks.sdk import WorkspaceClient
 from databricks.connect import DatabricksSession
+
 from pyspark.sql import functions as F
 
 checks = [
@@ -35,8 +36,6 @@ input_config = InputConfig("workspace.bronze.customers_cdc1")
 output_config = OutputConfig("workspace.bronze.valid_data")
 quarantine_config = OutputConfig("workspace.bronze.quarantine_data")  # optional
 metrics_config = OutputConfig("workspace.bronze.metrics_data")  # optional
-
-
 
 # Option 2: Use End to End method: read the data, apply the checks, write data to valid and quarantine tables,
 # and write metrics to the metrics table

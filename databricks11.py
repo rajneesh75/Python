@@ -12,6 +12,7 @@ input_df = spark.read.table("workspace.bronze.customers_cdc1")
 ws = WorkspaceClient()
 profiler = DQProfiler(ws)
 summary_stats, profiles = profiler.profile(input_df)
+dq_engine = DQEngine(ws)
 
 print(summary_stats)
 print()
@@ -24,8 +25,6 @@ checks = generator.generate_dq_rules(profiles)  # with default level "error"
 
 print(checks)
 print()
-dq_engine = DQEngine(ws)
-
 # save checks as YAML in arbitrary workspace location
 # dq_engine.save_checks(checks, config=WorkspaceFileChecksStorageConfig(location="/Shared/checks1.yml"))
 

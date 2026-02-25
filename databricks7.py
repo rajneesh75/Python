@@ -10,7 +10,7 @@ spark = DatabricksSession.builder.serverless().getOrCreate()
 
 ws = WorkspaceClient()
 
-workspace_path = "/Users/rajneesh75@gmail.com/customer_data_contract.yml"
+workspace_path = "/Repos/rajneesh75@gmail.com/databricks/customer_data_contract.yml"
 local_path = "customer_data_contract.yml"
 
 # Export Workspace file (as SOURCE)

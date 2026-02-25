@@ -40,6 +40,7 @@ metrics_config = OutputConfig("main.default.metrics_data")  # optional
 valid_df, quarantine_df, observation = engine.apply_checks_and_split(df, checks)
 quarantine_df.count()  # Trigger an action to populate metrics (e.g. count, save to a table), otherwise accessing
 # them will result in a stall
+
 engine.save_summary_metrics(
     observed_metrics=observation.get,
     metrics_config=metrics_config,

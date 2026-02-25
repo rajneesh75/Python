@@ -1,5 +1,11 @@
 from databricks.labs.dqx import check_funcs
 from databricks.labs.dqx.rule import DQRowRule, DQDatasetRule, DQForEachColRule
+from pyspark.sql import functions as F
+from databricks.connect import DatabricksSession
+
+spark = DatabricksSession.builder.serverless().getOrCreate()
+df = spark.read.table("workspace.bronze.customers_cdc1")
+
 
 checks = [
     DQRowRule(  # check for a single column
