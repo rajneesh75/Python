@@ -1,16 +1,11 @@
 import tempfile
 import yaml
 import json
-from datacontract import DataContract
-
-from datacontract import load_contract_from_dict
 from databricks.sdk import WorkspaceClient
 from databricks.connect import DatabricksSession
+from databricks.labs.dqx.profiler.profiler import DQProfiler
 from databricks.labs.dqx.profiler.generator import DQGenerator
-from databricks.labs.dqx.config import WorkspaceFileChecksStorageConfig
 from databricks.labs.dqx.engine import DQEngine
-
-
 from datetime import date
 from decimal import Decimal
 from pyspark.sql import types as T
@@ -152,47 +147,6 @@ schema:
 # Parse YAML
 contract_dict = yaml.safe_load(contract_yaml)
 
-# Create DataContract object
-dc = load_contract_from_dict(contract_dict)
-
-print(f"Contract: {contract['name']} v{contract['version']}")
-
-with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
-    yaml.dump(contract, f)
-    contract_file = f.name
-
-# Generate DQX rules (including AI-assisted text rules)
-generator = DQGenerator(workspace_client=ws)
-rules = generator.generate_dq_rules(
-    contract_file=contract_file,
-    process_text_rules=True,  # Enable AI-assisted rule generation from text expectations
-    default_criticality="error"  # or "warn" for warnings instead of errors
-)
-
-print(f"Generated {len(rules)} quality rules from contract")
-
-# Show rule breakdown by type
-predefined_count = len([r for r in rules if r.get("user_metadata", {}).get("rule_type") == "predefined"])
-explicit_count = len([r for r in rules if r.get("user_metadata", {}).get("rule_type") == "explicit"])
-text_llm_count = len([r for r in rules if r.get("user_metadata", {}).get("rule_type") == "text_llm"])
-
-print(f"  - {predefined_count} predefined rules (from property constraints)")
-print(f"  - {explicit_count} explicit DQX rules")
-print(f"  - {text_llm_count} AI-generated rules (from text expectations)")
-
-# Display generated rules
-print("========== Generated Rules ==========")
-print(json.dumps(rules, indent=2))
-
-validation_status = DQEngine.validate_checks(rules)
-
-if validation_status.has_errors:
-    print("⚠️  Validation errors found:")
-    for error in validation_status.errors:
-        print(f"  - {error}")
-else:
-    print(f"✅ All {len(rules)} rules validated successfully!")
-
 # Define schema
 schema = T.StructType([
     T.StructField("order_id", T.StringType(), True),
@@ -201,7 +155,7 @@ schema = T.StructType([
     T.StructField("order_total", T.DecimalType(10, 2), True),
     T.StructField("order_status", T.StringType(), True),
     T.StructField("quantity", T.IntegerType(), True),
-    T.StructField("discount_percentage", T.DecimalType(5, 2), True),
+    T.StructField("discount_percentage", T.DecimalType(5, 2), True)
 ])
 
 # Sample data with mix of valid and invalid records
@@ -222,6 +176,45 @@ data = [
 
 df = spark.createDataFrame(data, schema)
 df.show()
+
+# Profile input data
+profiler = DQProfiler(ws)
+summary_stats, profiles = profiler.profile(df)
+
+# Generate DQX rules from profiles
+generator = DQGenerator(workspace_client=ws)
+rules = generator.generate_dq_rules(profiles)
+
+print(f"Generated {len(rules)} quality rules from contract")
+
+# Show rule breakdown by type
+predefined_count = len([r for r in rules if r.get("user_metadata", {}).get("rule_type") == "predefined"])
+explicit_count = len([r for r in rules if r.get("user_metadata", {}).get("rule_type") == "explicit"])
+text_llm_count = len([r for r in rules if r.get("user_metadata", {}).get("rule_type") == "text_llm"])
+
+print(f"  - {predefined_count} predefined rules (from property constraints)")
+print(f"  - {explicit_count} explicit DQX rules")
+print(f"  - {text_llm_count} AI-generated rules (from text expectations)")
+
+# Display generated rules
+print("========== Generated Rules ==========")
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return super().default(obj)
+
+print(json.dumps(rules, indent=2, cls=DecimalEncoder))
+
+validation_status = DQEngine.validate_checks(rules)
+
+if validation_status.has_errors:
+    print("⚠️  Validation errors found:")
+    for error in validation_status.errors:
+        print(f"  - {error}")
+else:
+    print(f"✅ All {len(rules)} rules validated successfully!")
 
 engine = DQEngine(ws)
 result_df = engine.apply_checks_by_metadata(df, rules)

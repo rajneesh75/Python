@@ -6,7 +6,7 @@ from databricks.connect import DatabricksSession
 from pyspark.sql import functions as F
 
 spark = DatabricksSession.builder.serverless().getOrCreate()
-df = spark.read.table("workspace.bronze.customers_cdc1")
+df = spark.read.table("workspace.bronze.customers")
 df.printSchema()
 df.show(truncate=False)
 print(df.columns)

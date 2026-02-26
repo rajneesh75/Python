@@ -34,7 +34,3 @@ summary_stats, profiles = profiler.profile_table(InputConfig(location=default_ta
 
 # No user requirement provided
 checks = generator.generate_dq_rules_ai_assisted(summary_stats=summary_stats)
-
-# User requirement provided
-checks = generator.generate_dq_rules_ai_assisted(user_input="Market segment should always be in Upper Case",
-                                                 summary_stats=summary_stats)

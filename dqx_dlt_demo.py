@@ -1,45 +1,16 @@
 # Databricks notebook source
 import dlt
-
-# COMMAND ----------
-
-# MAGIC
-# MAGIC %md
-# MAGIC ## Create Lakeflow Pipeline (formerly Delta Live Tables - DLT)
-# MAGIC
-# MAGIC Create new ETL Pipeline to execute this notebook (see [here](https://docs.databricks.com/aws/en/getting-started/data-pipeline-get-started)):
-# MAGIC 1. Upload the notebook to a Databricks Workspace
-# MAGIC 2. Go to `Workflows` tab > `Create` > `ETL Pipeline` > `Add existing assets` > select the source code path and root directory
-# MAGIC 3. Add DQX library as a [dependency](https://docs.databricks.com/aws/en/dlt/dlt-multi-file-editor#environment) to the pipeline: Go to `Settings` > `Edit environment` > Add `databricks‑labs‑dqx` as dependency
-# MAGIC 4. Run the pipeline
-# MAGIC
-# MAGIC
-# MAGIC As an alternative to setting the environment as described above, you can also [install](https://docs.databricks.com/aws/en/dlt/external-dependencies) DQX directly in the notebook. Put the below commands as first cells in the notebook:
-# MAGIC
-# MAGIC %`pip install databricks-labs-dqx`
-# MAGIC
-# MAGIC `dbutils.library.restartPython()`
-# MAGIC
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Define Lakeflow Pipeline
-
-# COMMAND ----------
-
 from databricks.labs.dqx.engine import DQEngine
 from databricks.sdk import WorkspaceClient
+from databricks.connect import DatabricksSession
 
-# COMMAND ----------
+spark = DatabricksSession.builder.serverless().getOrCreate()
 
 @dlt.view
 def bronze():
   df = spark.readStream.format("delta") \
     .load("/databricks-datasets/delta-sharing/samples/nyctaxi_2019")
   return df
-
-# COMMAND ----------
 
 # Define Data Quality checks
 import yaml
@@ -107,8 +78,6 @@ checks = yaml.safe_load("""
   criticality: error
 """)
 
-# COMMAND ----------
-
 dq_engine = DQEngine(WorkspaceClient())
 
 # Read data from Bronze and apply checks
@@ -117,15 +86,11 @@ def bronze_dq_check():
   df = dlt.read_stream("bronze")
   return dq_engine.apply_checks_by_metadata(df, checks)
 
-# COMMAND ----------
-
-# # get rows without errors or warnings, and drop auxiliary columns
+# get rows without errors or warnings, and drop auxiliary columns
 @dlt.table
 def silver():
   df = dlt.read_stream("bronze_dq_check")
   return dq_engine.get_valid(df)
-
-# COMMAND ----------
 
 # get only rows with errors or warnings
 @dlt.table
