@@ -8,7 +8,7 @@ from databricks.connect import DatabricksSession
 from databricks.sdk import WorkspaceClient
 
 spark = DatabricksSession.builder.serverless().getOrCreate()
-input_df = spark.read.table("workspace.bronze.customers")
+input_df = spark.read.table("workspace.bronze.customers_cdc")
 
 # profile input data
 ws = WorkspaceClient()
@@ -26,7 +26,10 @@ dq_engine = DQEngine(ws)
 
 # save checks as YAML in arbitrary workspace location
 # dq_engine.save_checks(checks, config=WorkspaceFileChecksStorageConfig(location="/Users/rajneesh75@gmail.com/databricks/checks.yml"))
-dq_engine.save_checks(checks, config=FileChecksStorageConfig(location="checks.yml"))
+
+dq_engine.save_checks(checks, config=FileChecksStorageConfig(location="checks_customers_cdc.yml"))
+print("Checks saved")
+
 # generate Lakeflow Pipeline (DLT) expectations
 dlt_generator = DQDltGenerator(ws)
 

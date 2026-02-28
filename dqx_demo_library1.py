@@ -8,7 +8,7 @@ import yaml
 from databricks.labs.dqx.rule import DQRowRule, DQDatasetRule, DQForEachColRule
 from databricks.labs.dqx.engine import DQEngine
 from databricks.sdk import WorkspaceClient
-from databricks.labs.dqx.config import TableChecksStorageConfig
+from databricks.labs.dqx.config import TableChecksStorageConfig, FileChecksStorageConfig
 
 default_catalog_name = "main"
 default_schema_name = "default"
@@ -31,15 +31,15 @@ print(profiles)
 # generate DQX quality rules/checks candidates.they should be manually reviewed before being applied to the data
 generator = DQGenerator(ws)
 checks = generator.generate_dq_rules(profiles)  # with default level "error"
-print(yaml.safe_dump(checks))
-yaml.safe_dump(checks, open("dqx_demo_checks.yml", "w"))
+dq_engine.save_checks(checks, config=FileChecksStorageConfig(location="dqx_checks_file.yml"))
+print("Checks saved")
 
 # save generated checks in a Delta table
-dq_engine.save_checks(
-    checks=checks,
-    config=TableChecksStorageConfig(location=f"{default_catalog_name}.{default_schema_name}.dqx_checks_table",
-                                    mode="overwrite")
-)
+dq_engine.save_checks(checks=checks,
+                      config=TableChecksStorageConfig(
+                          location=f"{default_catalog_name}.{default_schema_name}.dqx_checks_table",
+                          mode="overwrite")
+                      )
 
 # generate Lakeflow Pipeline (formerly Delta Live Table (DLT)) expectations
 dlt_generator = DQDltGenerator(ws)
@@ -54,10 +54,8 @@ dlt_expectations = dlt_generator.generate_dlt_rules(profiles, language="Python_D
 print(dlt_expectations)
 
 input_df = spark.createDataFrame([[1, 3, 3, 2], [3, 3, None, 1]], schema)
-
-# load check from file
-with open('dqx_demo_checks.yml', "r") as f:
-    checks = yaml.safe_load(f)
+# load checks from a .yml file
+loaded_checks = dq_engine.load_checks(config=FileChecksStorageConfig(location="dqx_checks_file.yml"))
 
 # Option 1: apply quality rules and quarantine invalid records
 valid_df, quarantine_df = dq_engine.apply_checks_by_metadata_and_split(input_df, checks)
@@ -69,9 +67,7 @@ valid_and_quarantine_df = dq_engine.apply_checks_by_metadata(input_df, checks)
 valid_and_quarantine_df.show()
 
 input_df = spark.createDataFrame([[1, 3, 3, 2], [3, 3, None, 1]], schema)
-
 # load checks from a Delta table
-dq_engine = DQEngine(WorkspaceClient())
 checks = dq_engine.load_checks(
     config=TableChecksStorageConfig(location=f"{default_catalog_name}.{default_schema_name}.dqx_checks_table"))
 
@@ -328,4 +324,3 @@ checks = yaml.safe_load("""
 
 # validate the checks
 status = dq_engine.validate_checks(checks)
-assert not status.has_errors
