@@ -8,7 +8,7 @@ print("Loaded:", os.getenv("OPENAI_API_KEY"))
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def get_completion(prompt, model="gpt-3.5-turbo"):
+def get_completion(prompt, model="gpt-5.4"):
     """
     Generates a response from the OpenAI API based on the given prompt.
 

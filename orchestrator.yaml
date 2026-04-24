@@ -1,0 +1,28 @@
+memory_config:
+  memory_modules:
+    - memory_name: env_variable                  # Define a memory module for environment variables
+      memory_class: VariableMemoryModule
+      kwargs:
+        variables:                               # Store custom variables for use in prompts
+          dinner_budget: "$100 per person"       # Example variable: dinner budget constraint
+
+orchestrator:
+  agent_list:                                    # Required. List of agents orchestrator can route tasks to
+    - agent_name: "Planner Agent"                # Must match a utility agent name below
+    - agent_name: "Search Agent"                 # Multiple agents can be listed
+  system_prompt_suffix: "Ensure the dinner cost stays under the value of dinner_budget."
+  # Optional. Extra instruction appended to system prompt
+  contexts:                                      # Optional. Context sources included in orchestrator prompt
+    - "date"                                     # Inserts today’s date
+    - "env_variable"                             # Includes environment variables (e.g., dinner_budget)
+    - "chat_history"                             # Adds recent conversation turns
+    - "relevant_chat_history"                    # Retrieves the most relevant past chat history
+
+utility_agents:
+  - agent_class: PlanningAgent                   # Define Planner Agent
+    agent_name: "Planner Agent"                  # Name used by orchestrator
+    agent_description: "Turns constraints and facts into a concrete, time-ordered plan with rationale and trade-offs."
+
+  - agent_class: SearchAgent                     # Define Search Agent
+    agent_name: "Search Agent"                   # Name used by orchestrator
+    agent_description: "Search for reliable facts (hours, prices, locations, travel times)."

@@ -1,0 +1,14 @@
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "Weather Agent"
+    agent_description:
+      This agent finds the latest updates of the weather in any state in the USA.
+      Do not ask this agent any question that is not related to this scope.
+    config:
+      output_style: "conversational"
+      contexts:
+        - "chat_history"
+
+orchestrator:
+  agent_list:
+    - agent_name: "Weather Agent"

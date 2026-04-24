@@ -1,4 +1,3 @@
-import tempfile
 import yaml
 import json
 from databricks.sdk import WorkspaceClient
@@ -199,11 +198,13 @@ print(f"  - {text_llm_count} AI-generated rules (from text expectations)")
 # Display generated rules
 print("========== Generated Rules ==========")
 
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Decimal):
             return float(obj)
         return super().default(obj)
+
 
 print(json.dumps(rules, indent=2, cls=DecimalEncoder))
 

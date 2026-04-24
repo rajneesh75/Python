@@ -1,0 +1,26 @@
+utility_agents:
+  - agent_class: CustomAgent
+    agent_name: "Recommender Agent"
+    agent_description: |
+      The Recommender Agent is a specialist in item recommendations. For instance,
+      it can provide users with costume recommendations, items to purchase, food,
+      decorations, and so on.
+    config: {}
+
+  - agent_class: PlanningAgent
+    agent_name: "Party Planner"
+    agent_description: |
+      The Party Planner agent is specialized in helping users planning their parties.
+      For example, how to organize a halloween party, christmas party, and so on.
+      Don't call this agent for item recommendations.
+    config:
+      output_style: "markdown"
+      contexts:
+        - "chat_history"
+
+super_agents: []
+
+orchestrator:
+  agent_list:
+    - agent_name: "Party Planner"
+    - agent_name: "Recommender Agent"

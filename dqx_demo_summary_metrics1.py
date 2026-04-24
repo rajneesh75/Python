@@ -4,9 +4,6 @@ from databricks.labs.dqx.engine import DQEngine
 from databricks.labs.dqx.metrics_observer import DQMetricsObserver
 from databricks.sdk import WorkspaceClient
 from pyspark.sql import Row
-from databricks.labs.dqx.config import OutputConfig
-from databricks.labs.dqx.config import InputConfig
-import pyspark.sql.functions as F
 
 demo_catalog_name = "main"
 demo_schema_name = "default"
@@ -74,14 +71,8 @@ checks = yaml.safe_load("""
   criticality: warn
 """)
 
-# Create observer
-observer = DQMetricsObserver(name="dq_metrics")
-
-# Create the engine with the optional observer
-engine = DQEngine(WorkspaceClient(), observer=observer)
-
 # Apply checks and get metrics
-checked_df, observation = engine.apply_checks_by_metadata(df, checks)
+checked_df, observation = dq_engine.apply_checks_by_metadata(df, checks)
 
 # Apply checks, split and get metrics
 # valid_df, quarantine_df, observation = engine.apply_checks_by_metadata_and_split(df, checks)

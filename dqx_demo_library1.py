@@ -10,10 +10,9 @@ from databricks.labs.dqx.engine import DQEngine
 from databricks.sdk import WorkspaceClient
 from databricks.labs.dqx.config import TableChecksStorageConfig, FileChecksStorageConfig
 
-default_catalog_name = "main"
-default_schema_name = "default"
 
-schema = "col1: int, col2: int, col3: int, col4 int"
+
+
 
 spark = DatabricksSession.builder.serverless().getOrCreate()
 input_df = spark.createDataFrame([[1, 3, 3, 1], [2, None, 4, 1]], schema)
