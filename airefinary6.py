@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()  # loads your API_KEY from your local '.env' file
 api_key = str(os.getenv("AIREFINARY"))
 
-project = "orchestrator_project"
+project = "Jammu_visit_project"
 
 
 async def main():
@@ -24,9 +24,9 @@ async def main():
     client.create_project(config_path="orchestrator.yaml", project=project_name)
 
     async with client(project=project_name, uuid=session_uuid) as dc:
-        query = ("Plan a 1-day itinerary in Seattle for Saturday. I want to visit an art museum in the morning,"
-                 " a famous viewpoint around sunset, and have a seafood dinner."
-                 " Please ensure opening hours and rough costs are correct.")
+        query = ("Plan a 1-day trip to Jammu(India) by train for Saturday. "
+                 "In Jammu, I also want to go to MAM stadium during the day."
+                 " In evening I want to go to Hotel residency to have dinner.")
         responses = await dc.query(query=query)
 
         print(f"--- Running Query: {query} ---")

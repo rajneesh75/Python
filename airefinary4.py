@@ -12,9 +12,8 @@ api_key = str(os.getenv("AIREFINARY"))
 async def distiller_client_demo():
     distiller_client = DistillerClient(api_key=api_key)
 
-    async with distiller_client(project="weather_project", uuid="rajneesh_uuid", ) as dc:
-        responses = await dc.query(query="How is the weather today at Mountain View, California?"
-                                   )  # send the query to be processed
+    async with distiller_client(project="Cricket_ground", uuid="rajneesh_uuid", ) as dc:
+        responses = await dc.query(query="Find a cricket ground in sector 12 in Dwarka")
         async for response in responses:
             print(f"[{time.strftime('%H:%M:%S')}] {response['content']}")
 

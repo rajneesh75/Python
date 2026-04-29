@@ -4,7 +4,7 @@ memory_config:
       memory_class: VariableMemoryModule
       kwargs:
         variables:                               # Store custom variables for use in prompts
-          dinner_budget: "$100 per person"       # Example variable: dinner budget constraint
+          dinner_budget: "Rs 500 per person"       # Example variable: dinner budget constraint
 
 orchestrator:
   agent_list:                                    # Required. List of agents orchestrator can route tasks to

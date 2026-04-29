@@ -1,8 +1,8 @@
 utility_agents:
   - agent_class: SearchAgent
-    agent_name: "Weather Agent"
+    agent_name: "Cricket ground finding Agent"
     agent_description:
-      This agent finds the latest updates of the weather in any state in the USA.
+      This agent finds the cricket grounds in any location in New Delhi, India.
       Do not ask this agent any question that is not related to this scope.
     config:
       output_style: "conversational"
@@ -11,4 +11,4 @@ utility_agents:
 
 orchestrator:
   agent_list:
-    - agent_name: "Weather Agent"
+    - agent_name: "Cricket ground finding Agent"
