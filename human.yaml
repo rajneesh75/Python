@@ -1,0 +1,20 @@
+- agent_class: HumanAgent
+  agent_name: "Human Reviewer"
+  agent_description: "This agent interacts with the user to get feedback or additional information."
+  config:
+    user_input_method: "Terminal" # How the agent collects user feedback
+    wait_time: 300                # Maximum time in seconds to wait for user feedback
+    feedback_interpreter: true    # Optional. Whether to enable the feedback interpreter for refining responses. Defaults to true.
+    feedback_schema:              # Schema definition for structured feedback (required if using Structured Mode)
+      is_answer_correct:          # Question identifier
+        type: "bool"              # Type of expected feedback
+        description: "Is the answer provided correct?"        # Description of the question
+        required: true            # Optional. Whether required in the response. Defaults to true.
+      need_more_detail:           # Question identifier
+        type: "bool"              # Type of expected feedback
+        description: "Does the answer need more detail?"      # Description of the question
+        required: true            # Optional. Whether required in the response. Defaults to true.
+      optional_comment:           # Question identifier
+        type: "str"               # Type of expected feedback
+        description: "Any additional comments or suggestions" # Description of the question
+        required: false           # Optional. Whether required in the response. Defaults to true.

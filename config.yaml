@@ -1,14 +1,31 @@
 utility_agents:
-  - agent_class: SearchAgent
-    agent_name: "Cricket ground finding Agent"
-    agent_description:
-      This agent finds the cricket grounds in any location in New Delhi, India.
-      Do not ask this agent any question that is not related to this scope.
+  - agent_class: PlannerAgent
+    agent_name: "team selection"
+    agent_description: "Pick 17 member Indian cricket team"
     config:
       output_style: "conversational"
       contexts:
         - "chat_history"
+        - "relevant_chat_history"
+        - "env_variable"
+        - "date"
+      model: "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+
+  - agent_class: CustomAgent
+    agent_name: "captain agent"
+    agent_description: |
+            The captain agent is a experienced cricket captain incharge of a one day international game
+            It knows about batsmen strengths, bowler strengths, field placings and other nuances of cricket.
+    config:
+      output_style: "conversational"
+      contexts:
+        - "chat_history"
+        - "relevant_chat_history"
+        - "env_variable"
+        - "date"
+      model: "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
 
 orchestrator:
   agent_list:
-    - agent_name: "Cricket ground finding Agent"
+    - agent_name: "team selection"
+    - agent_name: "captain agent"

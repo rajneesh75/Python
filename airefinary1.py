@@ -28,5 +28,7 @@ async def generate_response(query: str):
 # Example call to the generate_response function
 if __name__ == "__main__":
     response = asyncio.run(
-        generate_response("What cricket grounds are available in Dwarka/Chhawla area? in New Delhi"))
+        generate_response("Pick a 15 member squad from the 1980s and 1990s era for a tour to australia."
+                          "Keep a mix of experience and young talent. Include 2 wicket keepers."
+                          "Explain your choices."))
     print(response)
