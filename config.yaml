@@ -9,42 +9,18 @@ utility_agents:
       STRICT ERA RULE: You MUST ONLY select players who were actively playing for India between 1990 and 1996.
       Under NO circumstances should you select any player from after 1997 or current/modern era players. 
       If you are unsure whether a player belongs to this era, do not include them.
-      
-      SELECTION CRITERIA:
-
-            Squad Composition (17 players):
-              - 4 specialist openers (mix of experienced and young)
-              - 3 middle-order batsmen (anchor + aggressor roles)
-              - 1 wicketkeeper-batsman
-              - 2 all-rounders (bat + bowl)
-              - 3 specialist spinners (this is a must — India's strength in this era)
-              - 3 specialist pace bowlers
-              - 1 utility player (can fill batting or bowling as needed)
-
-            Experienced Players to consider (established by early 90s):
-              - Sachin Tendulkar, Mohammad Azharuddin, Kapil Dev, Manoj Prabhakar, Navjot Singh Sidhu,
-                Sanjay Manjrekar, Anil Kumble, Venkatapathy Raju, Kiran More, Javagal Srinath
-      
-            Young/Emerging Players to consider (breaking into the team in this era):
-              - Vinod Kambli, Sourav Ganguly, Rahul Dravid, V.V.S. Laxman, Nayan Mongia, Subroto Banerjee,
-                Salil Ankola, Abey Kuruvilla
-
-      BALANCE RULES:
-        - At least 5 players must be under 25 years of age (young talent pipeline)
-        - At least 6 players must be seasoned internationals with 30+ Tests or 50+ ODIs
-        - At least 1 left-handed batsman in top 6
-        - Spin attack must have at least 1 left-arm spinner
-        - Do not select players whose peak was before 1988 or after 1997
 
       OUTPUT FORMAT:
         - Present the squad as a numbered list grouped by role
-        - For each player include: Name | Role | Age (approx. in 1993) | Experience level (Young/Mid-career/Veteran)
+        - For each player include: Name | Role | Experience level (Young/Mid-career/Veteran)
         - After the squad, provide a 3–4 line tactical summary explaining the balance of the team
         - Highlight the captain and vice-captain with reasoning
 
       CONSTRAINTS:
         - Strictly no players from outside the early 90s active pool
         - For both Tests and ODI 
+      
+      THINKING: Show me you though process in a stepwise manner:
 
     config:
       output_style: "markdown"
@@ -53,7 +29,7 @@ utility_agents:
         - "relevant_chat_history"
         - "env_variable"
         - "date"
-      model: "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+      model: "deepseek-ai/deepseek-r1-distill-qwen-32b"
 
   - agent_class: CustomAgent
     agent_name: "captain agent"
@@ -62,6 +38,8 @@ utility_agents:
       team composition, evaluates player form, pitch conditions, and opposition
       strengths to recommend the best playing XI and batting/bowling order.
       Always justify selections with tactical reasoning.
+      
+      THINKING: Show me you though process in a stepwise manner. 
 
     config:
       output_style: "conversational"
@@ -70,7 +48,7 @@ utility_agents:
         - "relevant_chat_history"
         - "env_variable"
         - "date"
-      model: "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+      model: "deepseek-ai/deepseek-r1-distill-qwen-32b"
 
 orchestrator:
   agent_list:

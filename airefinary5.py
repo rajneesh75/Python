@@ -19,8 +19,8 @@ async def team_selection_agent(query: str) -> str:
 
     response = await airefinery_client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
-        model="mistralai/Mistral-Small-3.1-24B-Instruct-2503", timeout=240
     )
+    print(response.choices[0].message.reasoning_content)
     return response.choices[0].message.content
 
 
@@ -33,7 +33,7 @@ async def captain_agent(query: str) -> str:
 
     response = await airefinery_client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
-        model="openai/gpt-oss-120b", timeout=120
+        model="deepseek-ai/deepseek-r1-distill-qwen-32b", timeout=120
     )
 
     return response.choices[0].message.content
