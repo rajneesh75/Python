@@ -1,11 +1,8 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts.chat import ChatPromptTemplate
-from langchain_core.globals import set_debug, set_verbose
 import os
 from dotenv import load_dotenv
 
-#set_debug(True)
-#set_verbose(True)
 
 load_dotenv()
 chat = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo", api_key=os.getenv("OPENAI_API_KEY"), verbose=True)

@@ -1,0 +1,18 @@
+orchestrator:
+  agent_list:
+    # List of agents available in the orchestrator. Each agent must be configured under utility_agents below.
+    - agent_name: "Team selector"
+
+utility_agents:
+
+  - agent_class: PlanningAgent
+    agent_name: "Team selector"
+    agent_description: "Pick 17 member Indian cricket team."
+    config:
+      output_style: "conversational"
+      contexts:
+        - "chat_history"
+        - "relevant_chat_history"
+        - "env_variable"
+        - "date"
+      model: "mistralai/Mistral-Small-3.1-24B-Instruct-2503"

@@ -1,0 +1,53 @@
+orchestrator:
+  agent_list:
+    - agent_name: "Human Reviewer"
+    - agent_name: "Initial Research Agent"
+    - agent_name: "Follow-up Research Agent"
+    - agent_name: "Human in the Loop Advisor"
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "Initial Research Agent"
+    agent_description: "Performs the first phase of research."
+
+  - agent_class: HumanAgent
+    agent_name: "Human Reviewer"
+    agent_description: "This agent interacts with the user to get feedback or additional information."
+    config:
+      user_input_method: "Terminal" # How the agent collects user feedback
+      wait_time: 300                # Maximum time in seconds to wait for user feedback
+      feedback_interpreter: true    # Optional. Whether to enable the feedback interpreter for refining responses. Defaults to true.
+      model: "deepseek-ai/deepseek-r1-distill-qwen-32b"  # add this
+      feedback_schema:              # Schema definition for structured feedback (required if using Structured Mode)
+        is_answer_correct:          # Question identifier
+          type: "bool"              # Type of expected feedback
+          description: "Is the answer provided correct?"        # Description of the question
+          required: true            # Optional. Whether required in the response. Defaults to true.
+        need_more_detail:           # Question identifier
+          type: "bool"              # Type of expected feedback
+          description: "Does the answer need more detail?"      # Description of the question
+          required: true            # Optional. Whether required in the response. Defaults to true.
+        optional_comment:           # Question identifier
+          type: "str"               # Type of expected feedback
+          description: "Any additional comments or suggestions" # Description of the question
+          required: false           # Optional. Whether required in the response. Defaults to true.
+
+  - agent_class: SearchAgent
+    agent_name: "Follow-up Research Agent"
+    agent_description: "Performs additional research based on human input."
+
+super_agents:
+  - agent_class: FlowSuperAgent
+    agent_name: "Human in the Loop Advisor"
+    agent_description: "An advisor that incorporates human feedback into the research process."
+    config:
+      goal: "To conduct research, get human feedback, and then write a final report."
+      agent_list:
+        # Required. The list of agents to be added in the agent pool. Each agent listed here must be configured under `utility_agents` in the root of the project YAML file.
+        - agent_name: "Initial Research Agent"   # Required.
+          next_step: # User design. Specifies next steps to run after this agent.
+            - "Human Reviewer"
+        - agent_name: "Human Reviewer"           # Required.
+          next_step: # User design. Specifies next steps to run after this agent.
+            - "Follow-up Research Agent"
+        - agent_name: "Follow-up Research Agent" # Required. Exit agent that produces the summary output.

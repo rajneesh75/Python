@@ -1,96 +1,44 @@
 - check:
-    function: is_not_null
     arguments:
       column: customer_id
-  name: customer_id_is_null
-  criticality: error
-- check:
     function: is_not_null
+  criticality: error
+  name: customer_id_is_null
+- check:
     arguments:
       column: customer_name
-  name: customer_name_is_null
+      trim_strings: true
+    function: is_not_null_and_not_empty
   criticality: error
+  name: customer_name_is_null_or_empty
 - check:
-    function: is_not_null
     arguments:
       column: gender
-  name: gender_is_null
-  criticality: error
-- check:
     function: is_not_null
+  criticality: error
+  name: gender_is_null
+- check:
     arguments:
       column: email
-  name: email_is_null
-  criticality: error
-- check:
     function: is_not_null
+  criticality: error
+  name: email_is_null
+- check:
     arguments:
       column: mobile
-  name: mobile_is_null
+      trim_strings: true
+    function: is_not_null_and_not_empty
   criticality: error
+  name: mobile_is_null_or_empty
 - check:
-    function: is_not_null
     arguments:
       column: city
-  name: city_is_null
-  criticality: error
-- check:
     function: is_not_null
+  criticality: error
+  name: city_is_null
+- check:
     arguments:
       column: state
+    function: is_not_null
+  criticality: error
   name: state_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: policy_id
-  name: policy_id_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: policy_type
-  name: policy_type_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: status
-  name: status_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: start_date
-  name: start_date_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: end_date
-  name: end_date_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: premium_amount
-  name: premium_amount_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: sum_insured
-  name: sum_insured_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: agent_id
-  name: agent_id_is_null
-  criticality: error
-- check:
-    function: is_not_null
-    arguments:
-      column: channel
-  name: channel_is_null
-  criticality: error

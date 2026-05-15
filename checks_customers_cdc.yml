@@ -1,0 +1,71 @@
+- check:
+    arguments:
+      column: operation
+    function: is_not_null
+  criticality: error
+  name: operation_is_null
+- check:
+    arguments:
+      column: operation_date
+    function: is_not_null
+  criticality: error
+  name: operation_date_is_null
+- check:
+    arguments:
+      column: operation_date
+      max_limit: 2025-01-16T00:00:00.000000+0000
+      min_limit: 2025-01-01T00:00:00.000000+0000
+    function: is_in_range
+  criticality: error
+  name: operation_date_isnt_in_range
+- check:
+    arguments:
+      column: customer_id
+    function: is_not_null
+  criticality: error
+  name: customer_id_is_null
+- check:
+    arguments:
+      column: gender
+    function: is_not_null
+  criticality: error
+  name: gender_is_null
+- check:
+    arguments:
+      column: email
+    function: is_not_null
+  criticality: error
+  name: email_is_null
+- check:
+    arguments:
+      column: mobile
+      trim_strings: true
+    function: is_not_null_and_not_empty
+  criticality: error
+  name: mobile_is_null_or_empty
+- check:
+    arguments:
+      column: city
+    function: is_not_null
+  criticality: error
+  name: city_is_null
+- check:
+    arguments:
+      column: state
+    function: is_not_null
+  criticality: error
+  name: state_is_null
+- check:
+    arguments:
+      column: updated_at
+    function: is_not_null
+  criticality: error
+  name: updated_at_is_null
+- check:
+    arguments:
+      column: updated_at
+      max_limit: 2025-01-16T00:00:00.000000+0000
+      min_limit: 2025-01-01T00:00:00.000000+0000
+    function: is_in_range
+  criticality: error
+  name: updated_at_isnt_in_range
