@@ -9,7 +9,7 @@ from langgraph.checkpoint.memory import MemorySaver
 
 load_dotenv()
 tavily_api_key = os.getenv("TAVILY_KEY")
-tool = TavilySearch(tavily_api_key=tavily_api_key)  # increased number of results
+tool = TavilySearch(tavily_api_key=tavily_api_key, max_results=3)  # increased number of results
 
 
 class AgentState(TypedDict):
@@ -42,7 +42,6 @@ class Agent:
         if self.system:
             messages = [SystemMessage(content=self.system)] + messages
         message = self.model.invoke(messages)
-        print(messages)
         return {'messages': [message]}
 
     def exists_action(self, state: AgentState):
@@ -77,8 +76,8 @@ memory = MemorySaver()
 abot = Agent(model, [tool], system=prompt, checkpointer=memory)
 config = {"configurable": {"thread_id": "1"}}
 
-messages = [HumanMessage(content="Give me some cricket grounds located in Dwarka, Delhi. Give me urls to the grounds "
-                                 "if possible.")]
+messages = [HumanMessage(content="Give me govt universities located in Dwarka, Delhi. Give me their urls"
+                                 "if possible. Try to keep the number of results to 3.")]
 thread = {"configurable": {"thread_id": "1"}}
 print("Invoking graph...")
 
@@ -87,6 +86,13 @@ for event in abot.graph.stream({"messages": messages}, thread):
         print(v['messages'])
 
 messages = [HumanMessage(content="What about Jammu, Jammu & Kashmir?")]
+print("Invoking graph...")
+for event in abot.graph.stream({"messages": messages}, thread):
+    for v in event.values():
+        print(v['messages'])
+
+
+messages = [HumanMessage(content="Which has better universities reputationwise")]
 print("Invoking graph...")
 for event in abot.graph.stream({"messages": messages}, thread):
     for v in event.values():
