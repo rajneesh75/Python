@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
-import os, operator
+import os
+from uuid import uuid4
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Annotated
 from langchain_core.messages import AnyMessage, SystemMessage, ToolMessage, HumanMessage
@@ -11,9 +12,38 @@ load_dotenv()
 tavily_api_key = os.getenv("TAVILY_KEY")
 tool = TavilySearch(tavily_api_key=tavily_api_key, max_results=3)  # increased number of results
 
+"""
+In previous examples we've annotated the `messages` state key
+with the default `operator.add` or `+` reducer, which always
+appends new messages to the end of the existing messages array.
+
+Now, to support replacing existing messages, we annotate the
+`messages` key with a customer reducer function, which replaces
+messages with the same `id`, and appends them otherwise.
+"""
+
+
+def reduce_messages(left: list[AnyMessage], right: list[AnyMessage]) -> list[AnyMessage]:
+    # assign ids to messages that don't have them
+    for message in right:
+        if not message.id:
+            message.id = str(uuid4())
+    # merge the new messages with the existing messages
+    merged = left.copy()
+    for message in right:
+        for i, existing in enumerate(merged):
+            # replace any existing messages with the same id
+            if existing.id == message.id:
+                merged[i] = message
+                break
+        else:
+            # append any new messages to the end
+            merged.append(message)
+    return merged
+
 
 class AgentState(TypedDict):
-    messages: Annotated[list[AnyMessage], operator.add]
+    messages: Annotated[list[AnyMessage], reduce_messages]
 
 
 class Agent:
@@ -31,7 +61,10 @@ class Agent:
         )
         graph.add_edge("action", "llm")
         graph.set_entry_point("llm")
-        self.graph = graph.compile(checkpointer=checkpointer)
+        self.graph = graph.compile(
+            checkpointer=checkpointer,
+            interrupt_before=["action"]
+        )
         self.tools = {t.name: t for t in tools}
         self.model = model.bind_tools(tools)
         print("Exiting init")
@@ -74,7 +107,7 @@ If you need to look up some information before asking a follow up question, you 
 model = ChatOpenAI(model="gpt-4o")
 memory = MemorySaver()
 abot = Agent(model, [tool], system=prompt, checkpointer=memory)
-config = {"configurable": {"thread_id": "1"}}
+
 
 messages = [HumanMessage(content="Give me govt universities located in Dwarka, Delhi. Give me their urls"
                                  "if possible. Try to keep the number of results to 3.")]
@@ -83,17 +116,34 @@ print("Invoking graph...")
 
 for event in abot.graph.stream({"messages": messages}, thread):
     for v in event.values():
-        print(v['messages'])
+        print(v)
 
+print(abot.graph.get_state(thread))
+print(abot.graph.get_state(thread).next)
+
+# ✅ Resume the interrupted graph BEFORE sending the next message
+print("Resuming after interrupt...")
+for event in abot.graph.stream(None, thread):
+    for v in event.values():
+        print(v)
+
+print()
+print()
 
 messages = [HumanMessage(content="What about Jammu, Jammu & Kashmir?")]
 print("Invoking graph...")
 for event in abot.graph.stream({"messages": messages}, thread):
     for v in event.values():
-        print(v['messages'])
+        print(v)
 
 print(abot.graph.get_state(thread))
 print(abot.graph.get_state(thread).next)
+
+# ✅ Resume again after second interrupt
+print("Resuming after interrupt...")
+for event in abot.graph.stream(None, thread):
+    for v in event.values():
+        print(v)
 
 print()
 print()
@@ -102,7 +152,10 @@ messages = [HumanMessage(content="Which has better universities with regards to 
 print("Invoking graph...")
 for event in abot.graph.stream({"messages": messages}, thread):
     for v in event.values():
-        print(v['messages'])
+        print(v)
 
-print(abot.graph.get_state(thread))
-print(abot.graph.get_state(thread).next)
+# ✅ Resume again
+print("Resuming after interrupt...")
+for event in abot.graph.stream(None, thread):
+    for v in event.values():
+        print(v)
