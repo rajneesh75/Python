@@ -12,6 +12,7 @@ access_token = os.getenv("DATABRICKS_TOKEN")
 engine = create_engine(
     f"databricks://token:{access_token}@{server_hostname}?http_path={http_path}"
 )
-df = pd.read_sql("SELECT * FROM workspace.gold.customers_policies", engine)
+print("connection created")
+df = pd.read_sql("SELECT * FROM workspace.bronze.products", engine)
 
 print(df)

@@ -1,7 +1,6 @@
 from databricks.labs.dqx.profiler.profiler import DQProfiler
 from databricks.labs.dqx.profiler.generator import DQGenerator
 from databricks.labs.dqx.profiler.dlt_generator import DQDltGenerator
-from databricks.labs.dqx.config import WorkspaceFileChecksStorageConfig
 from databricks.labs.dqx.config import FileChecksStorageConfig
 from databricks.labs.dqx.engine import DQEngine
 from databricks.connect import DatabricksSession

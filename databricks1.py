@@ -10,7 +10,7 @@ connection = sql.connect(
 
 cursor = connection.cursor()
 
-cursor.execute("SELECT * FROM workspace.gold.customers_policies")
+cursor.execute("SELECT * FROM workspace.bronze.products")
 print(cursor.fetchall())
 
 cursor.close()

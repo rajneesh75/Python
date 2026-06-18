@@ -10,7 +10,7 @@ spark = DatabricksSession.builder.serverless().getOrCreate()
 ws = WorkspaceClient()
 profiler = DQProfiler(ws)
 generator = DQGenerator(ws)
-df = spark.read.table("workspace.bronze.customers_cdc1")
+df = spark.read.table("workspace.bronze.customers")
 profiles = profiler.profile(df)
 dataset_profile, column_profiles = profiler.profile(df)
 # Step 3: generate rules

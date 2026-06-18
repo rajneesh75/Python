@@ -8,7 +8,7 @@ ws = WorkspaceClient()
 generator = DQGenerator(ws)
 
 profiler = DQProfiler(ws)
-df = spark.read.table("workspace.bronze.customers_cdc1")
+df = spark.read.table("workspace.bronze.customers")
 profiles = profiler.profile(df)
 checks = generator.generate_dq_rules(profiles)
 

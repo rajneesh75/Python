@@ -6,7 +6,7 @@ from databricks.sdk import WorkspaceClient
 from databricks.connect import DatabricksSession
 
 spark = DatabricksSession.builder.serverless().getOrCreate()
-input_df = spark.read.table("workspace.bronze.customers_cdc1")
+input_df = spark.read.table("workspace.bronze.customers")
 
 # profile input data
 ws = WorkspaceClient()
