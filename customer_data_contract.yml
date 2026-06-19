@@ -18,7 +18,7 @@ schema:
         logicalTypeOptions:
           pattern: '^[0-9]{8}$'   # → regex_match
       
-      - name: customer_email
+      - name: email
         logicalType: string
         required: true              # → is_not_null
         logicalTypeOptions:

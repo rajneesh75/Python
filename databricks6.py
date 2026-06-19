@@ -1,3 +1,4 @@
+from databricks.labs.dqx.config import WorkspaceFileChecksStorageConfig
 from databricks.labs.dqx.profiler.profiler import DQProfiler
 from databricks.labs.dqx.profiler.generator import DQGenerator
 from databricks.labs.dqx.profiler.dlt_generator import DQDltGenerator
@@ -7,7 +8,7 @@ from databricks.connect import DatabricksSession
 
 spark = DatabricksSession.builder.serverless().getOrCreate()
 
-input_df = spark.read.table("workspace.bronze.customers_cdc1")
+input_df = spark.read.table("workspace.bronze.products")
 
 # profile input data
 ws = WorkspaceClient()
@@ -16,12 +17,12 @@ summary_stats, profiles = profiler.profile(input_df)
 
 # generate DQX quality rules/checks
 generator = DQGenerator(ws)
-checks = generator.generate_dq_rules(profiles)  # with default level "error"
+checks = generator.generate_dq_rules(profiles)
 
 dq_engine = DQEngine(ws)
 
 # save checks as YAML in arbitrary workspace location
-#dq_engine.save_checks(checks, config=WorkspaceFileChecksStorageConfig(location="/Shared/App1/checks.yml"))
+#dq_engine.save_checks(checks, config=WorkspaceFileChecksStorageConfig(location="//Workspace//Users//rajneesh75@gmail.com//dqx//checks.yml"))
 
 # generate Lakeflow Pipeline (DLT) expectations
 dlt_generator = DQDltGenerator(ws)
