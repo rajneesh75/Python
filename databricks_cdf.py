@@ -37,32 +37,34 @@ if latest_table_version is not None and latest_table_version > etl_control_versi
         spark.read
         .format("delta")
         .option("readChangeFeed", "true")
-        .option("startingVersion", etl_control_version +1 )
+        .option("startingVersion", etl_control_version + 1)
         .table("products")
         .filter("_change_type IN ('insert','update_postimage','delete')")
-        .orderBy("_commit_version")
     )
 
     print("New changes")
     read_changes_df.show()
+    try:
+        if read_changes_df.head(1):
+            print("Running merge")
+            target = DeltaTable.forName(spark, "products_warehouse")
+            target.alias("t").merge(
+                read_changes_df.alias("s"),
+                "t.product_id = s.product_id"
+            ) \
+                .whenMatchedUpdateAll(condition="s._change_type = 'update_postimage'") \
+                .whenMatchedDelete(condition="s._change_type = 'delete'") \
+                .whenNotMatchedInsertAll() \
+                .execute()
 
-    if read_changes_df.head(1):
-        print("Running merge")
-        target = DeltaTable.forName(spark, "products_warehouse")
-        target.alias("t").merge(
-            read_changes_df.alias("s"),
-            "t.product_id = s.product_id"
-        ) \
-            .whenMatchedUpdateAll(condition="s._change_type = 'update_postimage'") \
-            .whenMatchedDelete(condition="s._change_type = 'delete'") \
-            .whenNotMatchedInsertAll() \
-            .execute()
+        new_etl_version = latest_table_version
+        print(f"new_etl_version {new_etl_version}")
 
-    new_etl_version = latest_table_version
-    print(f"new_etl_version {new_etl_version}")
-
-    control_tbl = DeltaTable.forName(spark, "etl_control")
-    control_tbl.update(condition=f"pipeline = 'product_etl'", set={"last_version": str(new_etl_version)})
+        control_tbl = DeltaTable.forName(spark, "etl_control")
+        control_tbl.update(condition=f"pipeline = 'product_etl'", set={"last_version": str(new_etl_version)})
+    except Exception as e:
+        print(f"Pipeline failed: {e}")
+        raise
 else:
     print("No new data available")
 
