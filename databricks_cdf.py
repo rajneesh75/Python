@@ -1,7 +1,6 @@
 from delta.tables import DeltaTable
 from databricks.connect import DatabricksSession
 from dotenv import load_dotenv
-from pyspark.sql import functions as F
 import os
 import logging
 
@@ -57,6 +56,10 @@ if latest_table_version is not None and latest_table_version > etl_control_versi
                 .whenNotMatchedInsertAll() \
                 .execute()
 
+        print("latest warehouse")
+        product_warehouse_df = spark.sql("SELECT * FROM products_warehouse order by _commit_timestamp")
+        product_warehouse_df.show()
+
         new_etl_version = latest_table_version
         print(f"new_etl_version {new_etl_version}")
 
@@ -67,7 +70,3 @@ if latest_table_version is not None and latest_table_version > etl_control_versi
         raise
 else:
     print("No new data available")
-
-print("current warehouse")
-product_warehouse_df = spark.sql("SELECT * FROM products_warehouse order by _commit_timestamp")
-product_warehouse_df.show()
