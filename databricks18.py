@@ -14,13 +14,12 @@ spark = (
     .getOrCreate()
 )
 print("Spark Version:", spark.version)
-spark.sql("USE workspace.bronze")
 
-bronze_orders_df = spark.sql("select * from workspace.bronze.orders")
-bronze_orders_df.show()
+raw_data_volume = "/Volumes/main/dbdemos_pipeline_bike/raw_data/"
 
-silver_orders_df = spark.sql("select * from workspace.silver.orders")
-silver_orders_df.show()
-
-gold_orders_df = spark.sql("select * from workspace.gold.gold_sales")
-gold_orders_df.show()
+# Print out a list of directories in our raw_data volume and a few files from those directories
+for table in os.listdir(raw_data_volume):
+    print(table + "/")
+    for file in os.listdir(raw_data_volume + table)[:3]:
+        print("  " + file)
+    print("  ...")
