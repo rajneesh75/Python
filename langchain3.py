@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo", api_key=os.getenv("OPENAI_API_KEY"))
+llm = ChatOpenAI(temperature=0.0, model="gpt-5.5", api_key=os.getenv("OPENAI_API_KEY"))
 print(llm)
 
 memory = ConversationBufferMemory()
@@ -21,14 +21,12 @@ print(memory.buffer)
 print('Memory variables_____')
 print(memory.load_memory_variables({}))
 memory = ConversationBufferMemory()
-memory.save_context({"input": "Hi"},
-                    {"output": "What's up"})
+memory.save_context({"input": "Hi"}, {"output": "What's up"})
 
 print('Memory buffer_____')
 print(memory.buffer)
 print(memory.load_memory_variables({}))
-memory.save_context({"input": "Not much, just hanging"},
-                    {"output": "Cool"})
+memory.save_context({"input": "Not much, just hanging"}, {"output": "Cool"})
 
 print('Memory buffer_____')
 print(memory.buffer)

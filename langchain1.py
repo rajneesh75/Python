@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-chat = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo", api_key=os.getenv("OPENAI_API_KEY"), verbose=True)
+api_key = os.getenv("OPENAI_API_KEY")
+llm = ChatOpenAI(model="gpt-5.5", temperature=0, api_key=api_key)
 
 template_string = """Translate the text that is delimited by triple backticks \
 into a style that is {style}. text: ```{text}```"""
@@ -22,7 +23,7 @@ cleaning up me kitchen. I need yer help right now, matey!"""
 customer_messages = prompt_template.format_messages(style=customer_style, text=customer_email)
 
 # Call the LLM to translate the style
-customer_message = chat.invoke(customer_messages)
+customer_message = llm.invoke(customer_messages)
 print(customer_message.content)
 
 service_reply = """Hey there customer,the warranty does not cover cleaning expenses for your kitchen \
@@ -33,5 +34,5 @@ service_style = """Bhojpuri"""
 
 service_messages = prompt_template.format_messages(style=service_style, text=service_reply)
 
-service_response = chat.invoke(service_messages)
+service_response = llm.invoke(service_messages)
 print(service_response.content)

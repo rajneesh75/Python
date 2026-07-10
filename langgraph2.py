@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from typing import TypedDict
 
 load_dotenv()
-print("Loaded:", os.getenv("OPENAI_API_KEY"))
+llm = ChatOpenAI(model="gpt-5.5", temperature=0, api_key=os.getenv("OPENAI_API_KEY"))
 
 
 class AgentState(TypedDict):
@@ -14,7 +14,6 @@ class AgentState(TypedDict):
 
 
 def call_model(state):
-    llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     return {"response": llm.invoke(state["story_summary"]).content}
 
 
@@ -24,5 +23,4 @@ workflow.set_entry_point("process")
 workflow.add_edge("process", END)
 
 agent = workflow.compile()
-
 print(agent.invoke({"story_summary": "Fix login issue"}))

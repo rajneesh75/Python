@@ -24,9 +24,7 @@ graph.set_entry_point("step1")
 graph.add_edge("step1", "step2")
 graph.set_finish_point("step2")
 
-# Compile
 app = graph.compile()
-
-# Run
+print("Hello")
 result = app.invoke({"message": "hello"})
 print(result)
