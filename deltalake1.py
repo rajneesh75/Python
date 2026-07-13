@@ -1,4 +1,7 @@
 from pyspark.sql import SparkSession
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 spark = (
     SparkSession.builder
