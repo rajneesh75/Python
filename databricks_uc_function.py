@@ -1,4 +1,7 @@
 from unitycatalog.ai.core.databricks import DatabricksFunctionClient
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 client = DatabricksFunctionClient()
 

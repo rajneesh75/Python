@@ -8,18 +8,13 @@ import os
 
 load_dotenv()
 
-# -----------------------
-# LLM
-# -----------------------
 llm = ChatOpenAI(
     temperature=0,
     model="gpt-4o-mini",   # or gpt-4.1, etc.
     api_key=os.getenv("OPENAI_API_KEY"),
 )
 
-# -----------------------
-# Tools
-# -----------------------
+
 
 # Wikipedia tool
 wiki = WikipediaAPIWrapper(
