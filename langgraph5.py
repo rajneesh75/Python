@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 import os
 from langchain_openai import ChatOpenAI
 
-# --------------------------------------------------
-# ENV SETUP
-# --------------------------------------------------
 load_dotenv()
 
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")

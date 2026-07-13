@@ -1,7 +1,10 @@
 from databricks.sdk import WorkspaceClient
+import logging
 
-w = WorkspaceClient()
+logging.basicConfig(level=logging.DEBUG)
+
+ws = WorkspaceClient()
 
 # List all serving endpoints in your workspace
-for endpoint in w.serving_endpoints.list():
+for endpoint in ws.serving_endpoints.list():
     print(endpoint.name, "|", endpoint.state)

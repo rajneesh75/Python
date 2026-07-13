@@ -3,9 +3,13 @@ from langchain_openai import ChatOpenAI
 import os
 from dotenv import load_dotenv
 from typing import TypedDict
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+load_dotenv()
 
 load_dotenv()
-llm = ChatOpenAI(model="gpt-5.5", temperature=0, api_key=os.getenv("OPENAI_API_KEY"))
+llm = ChatOpenAI(model="gpt-5.6", temperature=0, api_key=os.getenv("OPENAI_API_KEY"))
 
 
 class AgentState(TypedDict):
