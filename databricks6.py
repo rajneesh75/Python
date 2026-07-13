@@ -4,9 +4,11 @@ from databricks.labs.dqx.profiler.dlt_generator import DQDltGenerator
 from databricks.labs.dqx.engine import DQEngine
 from databricks.sdk import WorkspaceClient
 from databricks.connect import DatabricksSession
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 spark = DatabricksSession.builder.serverless().getOrCreate()
-
+print(spark.version)
 input_df = spark.read.table("workspace.bronze.products")
 
 # profile input data
