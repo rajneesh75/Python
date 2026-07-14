@@ -5,6 +5,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 import vertexai
 import os
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 print("Loaded:", os.getenv("PROJECT_ID"), os.getenv("REGION"))

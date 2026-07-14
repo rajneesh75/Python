@@ -1,19 +1,16 @@
-import google.generativeai as genai
+from google import genai
 import os
 from dotenv import load_dotenv
+import logging
 
+logging.basicConfig(level=logging.INFO)
 load_dotenv()
-genai.configure(api_key=os.getenv("API_KEY"), transport="rest",)
 
-# Initialize the model
-model = genai.GenerativeModel('text-bison-001')
-prompt = "How are you"
+client = genai.Client(api_key=os.getenv("API_KEY"))
+response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents="How are you?"
+)
 
 print("Generating content...")
-# Generate content from an image and prompt
-response = model.generate_content(prompt)
-
-response.resolve()  # Wait for response
-
-# Print the generated content
 print(response.text)

@@ -15,7 +15,6 @@ client = OpenAI(
 
 response = client.responses.create(
     model="gpt-5.6",
-    max_output_tokens=256,
     input=[
         {
             "role": "user",

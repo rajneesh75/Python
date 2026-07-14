@@ -1,6 +1,9 @@
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -23,7 +26,7 @@ class ChatBot:
 
     def execute(self):
         print("execute..")
-        completion = client.chat.completions.create(model="gpt-4o", temperature=1, messages=self.messages)
+        completion = client.chat.completions.create(model="gpt-5.6", temperature=1, messages=self.messages)
         return completion.choices[0].message.content
 
 
