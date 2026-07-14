@@ -1,22 +1,36 @@
 from databricks.sdk import WorkspaceClient
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 w = WorkspaceClient()
-wait = w.genie.start_conversation_and_wait(
-    space_id="01f11af19a0a1fcea21b49b146571f46",
-    content="How many total customers?"
-)
+SPACE_ID = "01f11af19a0a1fcea21b49b146571f46"
 
-print("\nQuestion:")
-print(wait.content)
 
-print("\nStatus:")
-print(wait.status)
+def get_answer(msg):
+    for attachment in msg.attachments:
+        if attachment.text is not None:
+            return attachment.text.content
 
-print("\nConversation:")
-print(wait.conversation_id)
+    return "No text answer returned."
 
-print("\nSQL:")
-print(wait.attachments[0].query.query)
 
-print("\nAnswer:")
-print(wait.attachments[2].text.content)
+question = input("You: ")
+
+msg = w.genie.start_conversation_and_wait(space_id=SPACE_ID, content=question)
+conversation_id = msg.conversation_id
+print("Genie:", msg.attachments[2].text.content)
+
+while True:
+    question = input("\nYou: ")
+
+    if question.lower() in ("exit", "quit"):
+        break
+
+    msg = w.genie.create_message_and_wait(
+        space_id=SPACE_ID,
+        conversation_id=conversation_id,
+        content=question
+    )
+
+    print("Genie:", get_answer(msg))
