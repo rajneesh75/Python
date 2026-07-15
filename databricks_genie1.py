@@ -19,7 +19,7 @@ question = input("You: ")
 
 msg = w.genie.start_conversation_and_wait(space_id=SPACE_ID, content=question)
 conversation_id = msg.conversation_id
-print("Genie:", msg.attachments[2].text.content)
+print("Genie:", get_answer(msg))
 
 while True:
     question = input("\nYou: ")

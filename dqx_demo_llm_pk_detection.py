@@ -8,6 +8,9 @@ from databricks.labs.dqx.config import LLMModelConfig, InputConfig
 from databricks.labs.dqx.rule import DQDatasetRule
 from databricks.labs.dqx import check_funcs
 import pyspark.sql.functions as F
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 spark = DatabricksSession.builder.serverless().getOrCreate()
 ws = WorkspaceClient()
