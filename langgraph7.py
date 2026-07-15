@@ -1,5 +1,4 @@
 from openai import OpenAI
-import re
 import os
 from dotenv import load_dotenv
 

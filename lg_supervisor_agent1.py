@@ -7,10 +7,13 @@ from langchain_core.tools import tool
 from langgraph.graph import (StateGraph, START, END)
 from langgraph.graph.message import (add_messages)
 from langgraph.prebuilt import ToolNode
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
-llm = ChatOpenAI(model="gpt-5.5", temperature=0, api_key=api_key)
+llm = ChatOpenAI(model="gpt-5.6", temperature=0, api_key=api_key,reasoning_effort="none",)
 
 
 class AgentState(TypedDict):
