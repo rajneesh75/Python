@@ -1,15 +1,13 @@
 import lamini
 import os
 from dotenv import load_dotenv
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
-
-
 lamini.api_key = os.getenv("LAMINI.API_KEY")
-
 llm = lamini.Lamini(model_name="EleutherAI/pythia-410m", )
 response = llm.generate("Tell me how to train my dog to sit.")
-
 print('non dictionary output - {}'.format(response))
 
 llm.upload_file("lamini_docs.jsonl", input_key="question", output_key="answer")
