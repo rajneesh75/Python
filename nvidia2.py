@@ -1,24 +1,29 @@
-from openai1 import OpenAI
-from dotenv import load_dotenv
+from openai import OpenAI
 import os
+from dotenv import load_dotenv
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 
 client = OpenAI(
     base_url="https://integrate.api.nvidia.com/v1",
-    api_key=os.getenv("NVIDIA_API_KEY")
+    api_key=NVIDIA_API_KEY
 )
 
 completion = client.chat.completions.create(
-    model="deepseek-ai/deepseek-r1",
-    messages=[{"role": "user", "content": ""}],
-    temperature=0.6,
-    top_p=0.7,
-    max_tokens=4096,
+    model="deepseek-ai/deepseek-v4-flash",
+    messages=[{"role": "user", "content": "How are you"}],
+    temperature=1,
+    top_p=0.95,
+    max_tokens=16384,
+    extra_body={"chat_template_kwargs": {"thinking": True, "reasoning_effort": "high"}},
     stream=False
 )
 
-reasoning = getattr(completion.choices[0].message, "reasoning_content", None)
+reasoning = getattr(completion.choices[0].message, "reasoning", None) or getattr(completion.choices[0].message,
+                                                                                 "reasoning_content", None)
 if reasoning:
     print(reasoning)
 print(completion.choices[0].message.content)
