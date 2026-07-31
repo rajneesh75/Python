@@ -2,7 +2,9 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 from sqlalchemy import create_engine
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 
 server_hostname = os.getenv("DATABRICKS_HOST")

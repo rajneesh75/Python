@@ -26,7 +26,7 @@ class ChatBot:
 
     def execute(self):
         print("execute..")
-        completion = client.chat.completions.create(model="gpt-5.6", temperature=1, messages=self.messages)
+        completion = client.chat.completions.create(model="gpt-5.6", messages=self.messages)
         return completion.choices[0].message.content
 
 

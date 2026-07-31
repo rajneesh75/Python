@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 import logging
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 
 spark = (

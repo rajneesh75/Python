@@ -2,7 +2,9 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 import os
 from dotenv import load_dotenv
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 
 # model_name = "meta-llama/Llama-2-7b-hf"

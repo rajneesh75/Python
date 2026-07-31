@@ -1,5 +1,8 @@
 from langgraph.graph import StateGraph
 from typing import TypedDict
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class MyState(TypedDict):
