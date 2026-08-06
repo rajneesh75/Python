@@ -18,21 +18,20 @@ JIRA_TOKEN = os.getenv("JIRA_KEY")
 ISSUE_KEY = os.getenv("ISSUE_KEY")
 
 print("Reading chroma DB...")
-client = chromadb.PersistentClient(path="./my_chroma")
+chroma_client = chromadb.PersistentClient(path="./my_chroma")
 
 sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
     model_name="all-MiniLM-L6-v2"  # Fast + good for code/text
 )
 
-collection = client.get_collection(name=COLLECTION_NAME, embedding_function=sentence_transformer_ef, )
+collection = chroma_client.get_collection(name=COLLECTION_NAME, embedding_function=sentence_transformer_ef, )
 query = "Modify the script that returns the sum of 2 numbers to instead return a sum of 3 numbers."
-results = collection.query(query_texts=[query], n_results=3)
-
+results = collection.query(query_texts=[query], n_results=3, include=["documents", "metadatas", "distances"])
 print("Possible matching scripts:")
 for idx, (doc, meta, score) in enumerate(
         zip(results["documents"][0], results["metadatas"][0], results["distances"][0])):
     print(f"{idx + 1}. File: {meta.get('filepath')}  Score: {score}")
-    print(doc[:150])
+    print(doc[:1000])
     print("-----")
 
 prompt = f"""
@@ -44,15 +43,29 @@ for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
     prompt += f"\n\n--- File: {meta['filepath']} ---\n{doc[:1000]}\n"
 
 prompt += """
-Based on the 3 code scripts above:
-- Explain what needs to be done under the heading Details
-- Identify dependencies and risks under the heading Dependencies and Risks
-- Suggest Acceptance criteria under the heading Acceptance Criteria
-- Suggest test cases under the heading Test Cases
-- Provide actionable guidance under the heading Actionable Guidance
-- Provide the actual code changes needed to be done
-- Only use the supplied source code.
-- If insufficient information exists,say so explicitly.
+Rules:
+
+1. Use ONLY the supplied source code.
+2. Never invent files or functions.
+3. Mention every affected file.
+4. If information is missing, explicitly say so.
+5. Produce Markdown.
+
+Return sections:
+
+## Details
+
+## Affected Files
+
+## Dependencies and Risks
+
+## Acceptance Criteria
+
+## Test Cases
+
+## Code Changes
+
+## Assumptions
 """
 
 print("Sending to LLM..")
@@ -65,10 +78,10 @@ client = OpenAI(
 completion = client.chat.completions.create(
     model="meta/llama-3.3-70b-instruct",
     messages=[{
-            "role": "system",
-            "content": "You are an experienced Python software architect."
-            },
-            {
+        "role": "system",
+        "content": "You are an experienced Python software architect."
+    },
+        {
             "role": "user",
             "content": prompt}],
     temperature=0.2,
@@ -76,15 +89,14 @@ completion = client.chat.completions.create(
     max_tokens=1024,
     stream=False
 )
-print(completion.choices[0].message)
-
+response = completion.choices[0].message.content.strip()
 
 if completion.choices[0].message:
     print("Posting to JIRA")
     jira_story_key = "SCRUM-1"  # Example story ID
     jira = JIRA(server=JIRA_SERVER, basic_auth=(JIRA_EMAIL, JIRA_TOKEN))
     issue = jira.issue(jira_story_key)
-    issue.update(fields={"description": completion.choices[0].message})
+    issue.update(fields={"description": response})
     print(f"LLM output successfully posted to JIRA story {jira_story_key}")
 else:
     print("No LLM output available to update JIRA.")
