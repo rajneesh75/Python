@@ -2,6 +2,9 @@ from databricks import sql
 import os
 from dotenv import load_dotenv
 import pandas as pd
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 
