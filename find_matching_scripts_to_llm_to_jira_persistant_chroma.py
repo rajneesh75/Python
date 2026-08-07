@@ -39,34 +39,28 @@ User query: {query}.
 Relevant source code from the repository:
 """
 
+prompt += """
+Return below sections for affected files:
+
+        ## Affected file name  
+        
+        ## Details
+        
+        ## Dependencies and Risks
+        
+        ## Acceptance Criteria
+        
+        ## Test Cases
+        
+        ## Code Changes
+
+        ## Assumptions        
+
+Produce Markdown.
+"""
+
 for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
     prompt += f"\n\n--- File: {meta['filepath']} ---\n{doc[:1000]}\n"
-
-prompt += """
-Rules:
-
-1. Use ONLY the supplied source code.
-2. Never invent files or functions.
-3. Mention every affected file.
-4. If information is missing, explicitly say so.
-5. Produce Markdown.
-
-Return sections:
-
-## Details
-
-## Affected Files
-
-## Dependencies and Risks
-
-## Acceptance Criteria
-
-## Test Cases
-
-## Code Changes
-
-## Assumptions
-"""
 
 print("Sending to LLM..")
 
@@ -76,7 +70,7 @@ client = OpenAI(
 )
 
 completion = client.chat.completions.create(
-    model="meta/llama-3.3-70b-instruct",
+    model="meta/llama-3.2-3b-instruct",
     messages=[{
         "role": "system",
         "content": "You are an experienced Python software architect."
@@ -90,13 +84,4 @@ completion = client.chat.completions.create(
     stream=False
 )
 response = completion.choices[0].message.content.strip()
-
-if completion.choices[0].message:
-    print("Posting to JIRA")
-    jira_story_key = "SCRUM-1"  # Example story ID
-    jira = JIRA(server=JIRA_SERVER, basic_auth=(JIRA_EMAIL, JIRA_TOKEN))
-    issue = jira.issue(jira_story_key)
-    issue.update(fields={"description": response})
-    print(f"LLM output successfully posted to JIRA story {jira_story_key}")
-else:
-    print("No LLM output available to update JIRA.")
+print(response)

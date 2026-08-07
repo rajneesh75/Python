@@ -9,7 +9,7 @@ client = OpenAI(
 )
 
 completion = client.chat.completions.create(
-    model="meta/llama-3.3-70b-instruct",
+    model="meta/llama-3.2-3b-instruct",
     messages=[{"role": "user", "content": "Hello"}],
     temperature=0.2,
     top_p=0.7,
