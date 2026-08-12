@@ -3,6 +3,10 @@ from databricks.labs.dqx.config import InputConfig
 from databricks.labs.dqx.profiler.generator import DQGenerator
 from databricks.labs.dqx.profiler.profiler import DQProfiler
 from databricks.sdk import WorkspaceClient
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 
 spark = DatabricksSession.builder.serverless().getOrCreate()
 ws = WorkspaceClient()

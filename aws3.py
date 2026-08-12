@@ -1,6 +1,9 @@
 import boto3
 import os
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 boto_session = boto3.Session(aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),

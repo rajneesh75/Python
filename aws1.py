@@ -1,6 +1,9 @@
 import boto3
 import os
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 print("Loaded:", os.getenv("AWS_ACCESS_KEY_ID"), os.getenv("AWS_SECRET_ACCESS_KEY"), os.getenv("REGION_NAME"))
