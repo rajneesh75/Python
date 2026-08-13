@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 
+
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 
 

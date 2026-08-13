@@ -14,9 +14,9 @@ def extract_facts(text):
     for ent in doc.ents:
         entities.append((ent.text, ent.label_))
 
-    persons =[]
+    persons = []
     for ent in doc.ents:
-        if ent.label_ in ("PERSON"):
+        if ent.label_ in "PERSON":
             persons.append(ent.text)
 
     # Extract numbers and dates

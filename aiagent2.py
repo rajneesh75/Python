@@ -4,7 +4,9 @@ from langchain_openai import ChatOpenAI
 import os
 from dotenv import load_dotenv
 from wikipedia import wikipedia
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 print("Loaded:", os.getenv("OPENAI_API_KEY"))
 llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
